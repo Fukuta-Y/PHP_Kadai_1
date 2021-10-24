@@ -43,6 +43,6 @@
 <?php 
 } 
 ?>
-        <ttable>
+        <table>
     </body>
 </html>
