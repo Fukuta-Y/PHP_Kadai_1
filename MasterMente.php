@@ -1,12 +1,14 @@
 <?php
     $dbCnt = 0;
     try{
+        // テーブルデータを取得
         $pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8", "root", "");
         $sql = "select";
         $sql .= "    ID";
         $sql .= "   ,NAME";
         $sql .= "   ,CASE WHEN SEX = '1' THEN '男' WHEN SEX ='2' THEN '女' END AS 'SEX'";
-        $sql .= "   ,POSTNO";
+        $sql .= "   ,MID(POSTNO FROM 1 FOR 3) AS POSTNO1";
+        $sql .= "   ,MID(POSTNO FROM 4 FOR 4) AS POSTNO2";
         $sql .= "   ,ADDRESS1";
         $sql .= "   ,ADDRESS2";
         $sql .= "   ,BIKO";
@@ -16,6 +18,7 @@
         $sth->execute();
         $result = $sth->fetchAll();
 
+        // データ件数をカウントする
         foreach($result as $row){
             $dbCnt++;
         }
@@ -100,7 +103,7 @@
             <td width="100"><?php echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT);?></td> 
             <td width="100"><?php echo $row['NAME'];?></td> 
             <td width="100"><?php echo $row['SEX'];?></td>  
-            <td width="100"><?php echo $row['POSTNO'];?></td>
+            <td width="100"><?php echo $row['POSTNO1']; echo "-"; echo$row['POSTNO2'];?></td>
             <td width="100"><?php echo $row['ADDRESS1'];?></td> 
             <td width="100"><?php echo $row['ADDRESS2'];?></td> 
             <td width="100"><?php echo $row['BIKO'];?></td> 
