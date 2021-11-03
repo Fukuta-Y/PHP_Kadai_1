@@ -1,33 +1,72 @@
 <?php
     $dbCnt = 0;
-    try{
-        // テーブルデータを取得
-        $pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8", "root", "");
-        $sql = "select";
-        $sql .= "    ID";
-        $sql .= "   ,NAME";
-        $sql .= "   ,CASE WHEN SEX = '1' THEN '男' WHEN SEX ='2' THEN '女' END AS 'SEX'";
-        $sql .= "   ,MID(POSTNO FROM 1 FOR 3) AS POSTNO1";
-        $sql .= "   ,MID(POSTNO FROM 4 FOR 4) AS POSTNO2";
-        $sql .= "   ,ADDRESS1";
-        $sql .= "   ,ADDRESS2";
-        $sql .= "   ,BIKO";
-        $sql .= " from";
-        $sql .= "  T_USER_INFO";
-        $sth = $pdo->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetchAll();
+    $err = "";
+    // 初期表示時
+    if($_SERVER["REQUEST_METHOD"] != "POST"){
+        $NAME = null;
+        $SEX = '0';
+        $POSTNO1 = null;
+        $POSTNO2 = null;
+        $ADDRESS1 = null;
+        $ADDRESS2 = null;
+        $BIKO = null;
 
-        // データ件数をカウントする
-        foreach($result as $row){
-            $dbCnt++;
+        // 検索処理のphpファイルを呼び出し
+        include('Search.php');
+    }else{
+        // 検索ボタン
+        if(isset($_POST['btnSearch'])){
+
+            //検索条件を保持する
+            $NAME  = $_POST["txtName"];
+
+            //検索条件を保持する
+            $SEX  = $_POST["rdoSex"];
+
+            //検索条件を保持する
+            $POSTNO1  = $_POST["txtPostNo1"];
+
+            //検索条件を保持する
+            $POSTNO2  = $_POST["txtPostNo2"];
+
+            //検索条件を保持する
+            $ADDRESS1  = $_POST["txtAddress1"];
+
+            //検索条件を保持する
+            $ADDRESS2  = $_POST["txtAddress2"];
+
+            //検索条件を保持する
+            $BIKO  = $_POST["txtBiko"];
+
+            // 検索処理のphpファイルを呼び出し
+            include('Search.php');
+
+        }
+        // 選択ボタン
+        else if(isset($_POST['btnSelect'])){
+
+        }
+        // クリアボタン
+        else if(isset($_POST['btnClear'])){
+            $NAME = null;
+            $SEX = '0';
+            $POSTNO1 = null;
+            $POSTNO2 = null;
+            $ADDRESS1 = null;
+            $ADDRESS2 = null;
+            $BIKO = null;
+    
+            // 検索処理のphpファイルを呼び出し
+            include('Search.php');
         }
 
-    }catch (PDOException $e){ 
-        print('Error:'.$e->getMessage());
-        die();
     }
 ?>
+<script type="text/javascript">
+    // function search() {
+    //     alert("Hello");
+    // }
+</script>
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,38 +75,47 @@
     <link href="design.css" rel="stylesheet">
 </head>
 <body>
+<form action="MasterMente.php" method="post">
+        <table style="width:500px;height:70px;">
+            <tr> 
+                <td>
+                    <label style="width:100px;color:red;" id="errLabel"><?php echo $err;?></label>
+                </td>
+            </tr> 
+        </table>
         <table>
                 <tr> 
                     <td width="100">会員番号</td>
-                    <td width="200"><lable id="ID"></lable></td> 
+                    <td width="280"><lable id="ID"></lable></td> 
                 </tr> 
                 <tr> 
                     <td width="100">名前</td>
-                    <td width="200"><input type="text" id="NAME" size="15" maxlength="10" ></td> 
+                    <td width="280"><input type="text" name="txtName" size="20" maxlength="10" ></td> 
                 </tr> 
                 <tr> 
                     <td width="100">性別</td>
-                    <td width="200"><input type="radio" id="rdoMen" name="sex" value="1" checked="checked">男</input><input type="radio" id="rdoWoman" name="sex"  value="2">女</input></td> 
+                    <td width="280"><input type="radio" name="rdoSex" value="1" checked="checked">男</input><input type="radio" name="rdoSex" value="2">女</input><input type="radio" name="rdoSex" value="0">未指定</input></td> 
                 </tr>
                 <tr> 
                     <td width="100">郵便番号</td>
-                    <td width="200"><input type="text" id="txtPostNo1" maxlength="3" size="8">-<input type="text" id="txtPostNo2" maxlength="4"  size="9"></td> 
+                    <td width="280"><input type="text" name="txtPostNo1" maxlength="3" size="4"> - <input type="text" name="txtPostNo2" maxlength="4" size="8"></td> 
                 </tr> 
                 <tr> 
                     <td width="100">住所１</td>
-                    <td width="200"><input type="text" id="txtAddress1" maxlength="15" size="20"></td> 
+                    <td width="280"><input type="text" name="txtAddress1" maxlength="15" size="25"></td> 
                 </tr> 
                 <tr> 
                     <td width="100">住所２</td>
-                    <td width="200"><input type="text" id="txtAddress2" maxlength="15" size="20"></td> 
+                    <td width="280"><input type="text" name="txtAddress2" maxlength="15" size="25"></td> 
                 </tr> 
                 <tr> 
                     <td width="100">備考</td>
-                    <td width="200"><input type="text" id="txtBiko" maxlength="15" size="20"></td> 
+                    <td width="280"><input type="text" name="txtBiko" maxlength="15" size="25"></td> 
                 </tr> 
         </table>
         </br>
         <button type="submit" style="width:100px;" name="btnSearch">検索</button>&nbsp;&nbsp;
+        <button type="submit" style="width:100px;" name="btnSelect">選択</button>&nbsp;&nbsp;
         <button type="submit" style="width:100px;" name="btnInsert">登録</button>&nbsp;&nbsp;
         <button type="submit" style="width:100px;" name="btnDelete">削除</button>&nbsp;&nbsp;
         <button type="submit" style="width:100px;" name="btnClear">クリア</button>
@@ -112,5 +160,6 @@
 }
 ?>
         <table>
+</form>
     </body>
 </html>
