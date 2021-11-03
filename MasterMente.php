@@ -17,25 +17,19 @@
         // 検索ボタン
         if(isset($_POST['btnSearch'])){
 
-            //検索条件を保持する
+            //名前
             $NAME  = $_POST["txtName"];
-
-            //検索条件を保持する
+            //性別
             $SEX  = $_POST["rdoSex"];
-
-            //検索条件を保持する
+            //郵便番号１
             $POSTNO1  = $_POST["txtPostNo1"];
-
-            //検索条件を保持する
+            //郵便番号２
             $POSTNO2  = $_POST["txtPostNo2"];
-
-            //検索条件を保持する
+            //住所１
             $ADDRESS1  = $_POST["txtAddress1"];
-
-            //検索条件を保持する
+            //住所２
             $ADDRESS2  = $_POST["txtAddress2"];
-
-            //検索条件を保持する
+            //備考
             $BIKO  = $_POST["txtBiko"];
 
             // 検索処理のphpファイルを呼び出し
