@@ -1,8 +1,9 @@
 <?php
     $dbCnt = 0;
-    $err = "";
+    $errMsg = "";
     // 初期表示時
     if($_SERVER["REQUEST_METHOD"] != "POST"){
+        $ID = null;
         $NAME = null;
         $SEX = '0';
         $POSTNO1 = null;
@@ -17,14 +18,21 @@
         // 検索ボタン
         if(isset($_POST['btnSearch'])){
 
+            // 会員番号
+            $ID  = $_POST["txtMember"];
             //名前
             $NAME  = $_POST["txtName"];
             //性別
-            $SEX  = $_POST["rdoSex"];
-            //郵便番号１
-            $POSTNO1  = $_POST["txtPostNo1"];
-            //郵便番号２
-            $POSTNO2  = $_POST["txtPostNo2"];
+            if($_POST["rdoSex"] == "男"){
+                $SEX  = '1';
+            }
+            else
+            {
+                $SEX  = '2';
+            }
+            //郵便番号
+            $POSTNO  = $_POST["txtPostNo1"];
+            $POSTNO .= $_POST["txtPostNo2"];
             //住所１
             $ADDRESS1  = $_POST["txtAddress1"];
             //住所２
@@ -32,16 +40,15 @@
             //備考
             $BIKO  = $_POST["txtBiko"];
 
+            // エラーチェックの呼び出し
+            include('ErrCheck.php');
+
             // 検索処理のphpファイルを呼び出し
             include('Search.php');
-
-        }
-        // 選択ボタン
-        else if(isset($_POST['btnSelect'])){
-
         }
         // クリアボタン
         else if(isset($_POST['btnClear'])){
+            $ID = null;
             $NAME = null;
             $SEX = '0';
             $POSTNO1 = null;
@@ -53,13 +60,80 @@
             // 検索処理のphpファイルを呼び出し
             include('Search.php');
         }
+        // 登録ボタン
+        else if(isset($_POST['btnInsertUpdate'])){
 
+            // 会員番号
+            $ID  = $_POST["txtMember"];
+
+            // 名前
+            $NAME  = $_POST["txtName"];
+
+            // // 性別
+            // if($_POST["rdoSex"] == "男"){
+            //     $SEX  = '1';
+            // }
+            // else
+            // {
+            //     $SEX  = '2';
+            // }
+
+            // //郵便番号
+            // $POSTNO  = $_POST["txtPostNo1"];
+            // $POSTNO .= $_POST["txtPostNo2"];
+
+            // //住所１
+            // $ADDRESS1  = $_POST["txtAddress1"];
+
+            // //住所２
+            // $ADDRESS2  = $_POST["txtAddress2"];
+
+            // //備考
+            // $BIKO  = $_POST["txtBiko"];
+
+            // // 検索処理のphpファイルを呼び出し
+            // include('Update.php');
+
+            // // // 検索処理のphpファイルを呼び出し
+            // include('Search.php');
+        }
+        // 選択ボタン
+        else if(isset($_POST['btnSearch'])){
+
+        }
+        // 削除ボタン
+        else if(isset($_POST['btnDelete'])){
+
+            $ID = $_POST["txtMember"];
+
+            // 検索処理のphpファイルを呼び出し
+            include('Delete.php');
+
+            //名前
+            $NAME  = $_POST["txtName"];
+
+            $SEX = '0';
+            $POSTNO1 = null;
+            $POSTNO2 = null;
+            $ADDRESS1 = null;
+            $ADDRESS2 = null;
+            $BIKO = null;
+
+            // 検索処理のphpファイルを呼び出し
+            include('Search.php');
+        }
     }
 ?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript">
-    // function search() {
-    //     alert("Hello");
-    // }
+//選択ボタンをクリック時
+function cal() {
+    alert('a');
+        var name2 = $(this).closest('tr').children("td").find('id=id').val();
+        alert('b');
+        alert(name2);
+
+        }
 </script>
 <!DOCTYPE html>
 <html>
@@ -70,21 +144,21 @@
 </head>
 <body>
 <form action="MasterMente.php" method="post">
-        <table style="width:500px;height:70px;">
+        <table style="width:500px;height:50px;">
             <tr> 
                 <td>
-                    <label style="width:100px;color:red;" id="errLabel"><?php echo $err;?></label>
+                    <label style="width:100px;color:red;" id="errLabel"><?php echo $errMsg;?></label>
                 </td>
             </tr> 
         </table>
         <table>
                 <tr> 
                     <td width="100">会員番号</td>
-                    <td width="280"><lable id="ID"></lable></td> 
+                    <td width="280"><input type="text" name="txtMember" size="10" maxlength="7" value="1"></td> 
                 </tr> 
                 <tr> 
                     <td width="100">名前</td>
-                    <td width="280"><input type="text" name="txtName" size="20" maxlength="10" ></td> 
+                    <td width="280"><input type="text" name="txtName" size="20" maxlength="10"></td> 
                 </tr> 
                 <tr> 
                     <td width="100">性別</td>
@@ -92,7 +166,7 @@
                 </tr>
                 <tr> 
                     <td width="100">郵便番号</td>
-                    <td width="280"><input type="text" name="txtPostNo1" maxlength="3" size="4"> - <input type="text" name="txtPostNo2" maxlength="4" size="8"></td> 
+                    <td width="280"><input type="text" name="txtPostNo1" maxlength="3" size="4"><?$POSTNO1?></input> - <input type="text" name="txtPostNo2" maxlength="4" size="8"><?$POSTNO2?></input></td> 
                 </tr> 
                 <tr> 
                     <td width="100">住所１</td>
@@ -109,14 +183,13 @@
         </table>
         </br>
         <button type="submit" style="width:100px;" name="btnSearch">検索</button>&nbsp;&nbsp;
-        <button type="submit" style="width:100px;" name="btnSelect">選択</button>&nbsp;&nbsp;
-        <button type="submit" style="width:100px;" name="btnInsert">登録</button>&nbsp;&nbsp;
-        <button type="submit" style="width:100px;" name="btnDelete">削除</button>&nbsp;&nbsp;
+        <button type="submit" style="width:100px;" name="btnInsertUpdate">登録</button>&nbsp;&nbsp;
         <button type="submit" style="width:100px;" name="btnClear">クリア</button>
         </br>
         <table>
         <tr> 
-            <td width="30"></td>
+            <td width="50"></td>
+            <td width="50"></td>
             <td width="100"></td>
             <td width="100"></td>
             <td width="100"></td>
@@ -126,9 +199,10 @@
             <td width="100">&nbsp;&nbsp;&nbsp;&nbsp;<lable id="lblCount"><?php echo $dbCnt; ?>件</lable></td>
         </tr> 
         </table>
-        <table border=’1’ class="main">
+        <table border="1" class="main">
         <tr> 
-            <td width="30" style="background-color: greenyellow;"><input type="checkbox" id="delFlg" value="0"/></td>
+            <td width="50" style="background-color: greenyellow;"></td>
+            <td width="50" style="background-color: greenyellow;"></td>
             <td width="100" style="background-color: greenyellow;">会員番号</td>
             <td width="100" style="background-color: greenyellow;">名前</td> 
             <td width="100" style="background-color: greenyellow;">性別</td> 
@@ -138,17 +212,20 @@
             <td width="100" style="background-color: greenyellow;">備考</td> 
         </tr> 
 <?php 
+    $rdoCnt = 0;
     foreach($result as $row){
-?> 
-         <tr> 
-            <td width="30"><input type="checkbox" id="delFlg" value="1"/></td> 
-            <td width="100"><?php echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT);?></td> 
-            <td width="100"><?php echo $row['NAME'];?></td> 
-            <td width="100"><?php echo $row['SEX'];?></td>  
-            <td width="100"><?php echo $row['POSTNO1']; echo "-"; echo$row['POSTNO2'];?></td>
-            <td width="100"><?php echo $row['ADDRESS1'];?></td> 
-            <td width="100"><?php echo $row['ADDRESS2'];?></td> 
-            <td width="100"><?php echo $row['BIKO'];?></td> 
+        $rdoCnt++;
+?>
+         <tr>
+            <td width="30"><button type="submit" style="width:100%;" name="btnSearch" onclick="cal()">選択</td> 
+            <td width="30"><button type="submit" style="width:100%;" name="btnDelete">削除</td> 
+            <td width="100" id="id"><?php echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT);?></td> 
+            <td width="100" name="name"><?php echo $row['NAME'];?></td> 
+            <td width="100" name="sex"><?php echo $row['SEX'];?></td>  
+            <td width="100" name="postno"><?php echo $row['POSTNO1']; echo "-"; echo$row['POSTNO2'];?></td>
+            <td width="100" name="address1"><?php echo $row['ADDRESS1'];?></td> 
+            <td width="100" name="address2"><?php echo $row['ADDRESS2'];?></td> 
+            <td width="100" name="biko"><?php echo $row['BIKO'];?></td>
         </tr> 
 <?php 
 }
