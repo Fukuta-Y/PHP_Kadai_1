@@ -1,21 +1,15 @@
 <?php
-    $dbCnt = 0;
     $errMsg = "";
     // 初期表示時
     if($_SERVER["REQUEST_METHOD"] != "POST"){
-        $ID = null;
-        $NAME = null;
-        $SEX = '0';
-        $POSTNO = null;
-        $ADDRESS1 = null;
-        $ADDRESS2 = null;
-        $BIKO = null;
+        $mode= $_GET['mode'];
 
-        // 検索処理のphpファイルを呼び出し
-        include('Search.php');
+
+
+
     }else{
         // 検索ボタン
-        if(isset($_POST['btnSearch'])){
+        if(isset($_POST['btnReSearch'])){
 
             // 会員番号
             $ID  = $_POST["txtMember"];
@@ -37,20 +31,7 @@
             include('ErrCheck.php');
 
             // 検索処理のphpファイルを呼び出し
-            include('Search.php');
-        }
-        // クリアボタン
-        else if(isset($_POST['btnClear'])){
-            $ID = null;
-            $NAME = null;
-            $SEX = '0';
-            $POSTNO = null;
-            $ADDRESS1 = null;
-            $ADDRESS2 = null;
-            $BIKO = null;
-    
-            // 検索処理のphpファイルを呼び出し
-            include('Search.php');
+            include('SearchList.php');
         }
         // 登録ボタン
         else if(isset($_POST['btnInsertUpdate'])){
@@ -91,42 +72,8 @@
             // // 検索処理のphpファイルを呼び出し
             include('Search.php');
         }
-        // 選択ボタン
-        else if(isset($_POST['btnSearch'])){
-
-        }
-        // 削除ボタン
-        else if(isset($_POST['btnDelete'])){
-
-            $ID = $_POST["txtMember"];
-
-            // 検索処理のphpファイルを呼び出し
-            include('Delete.php');
-
-            //パラメータ初期化
-            $NAME  = null;
-            $SEX = '0';
-            $POSTNO = null;
-            $ADDRESS1 = null;
-            $ADDRESS2 = null;
-            $BIKO = null;
-
-            // 検索処理のphpファイルを呼び出し
-            include('Search.php');
-        }
     }
 ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script type="text/javascript">
-//選択ボタンをクリック時
-function cal() {
-    alert('a');
-        var name2 = $(this).closest('tr').children("td").find('id=id').val();
-        alert('b');
-        alert(name2);
-
-        }
-</script>
 <!DOCTYPE html>
 <html>
 <head>
@@ -144,10 +91,14 @@ function cal() {
             </tr> 
         </table>
         <table>
-                <tr> 
-                    <td width="100">会員番号</td>
-                    <td width="280"><input type="text" name="txtMember" size="10" maxlength="7"></td> 
-                </tr> 
+                <?php 
+                if($mode == "3" || $mode == "4") {
+                    echo "<tr> ";
+                    echo "<td width='100'>会員番号</td>";
+                    echo "<td width='280'><input type='text' name='txtMember' size='10' maxlength='7'></td> ";
+                    echo "</tr> ";
+                }
+                ?>
                 <tr> 
                     <td width="100">名前</td>
                     <td width="280"><input type="text" name="txtName" size="20" maxlength="10"></td> 
@@ -158,7 +109,7 @@ function cal() {
                 </tr>
                 <tr> 
                     <td width="100">郵便番号</td>
-                    <td width="280"><input type="text" name="txtPostNo1" maxlength="3" size="4"><?$POSTNO1?></input> - <input type="text" name="txtPostNo2" maxlength="4" size="8"><?$POSTNO2?></input></td> 
+                    <td width="280"><input type="text" name="txtPostNo1" maxlength="3" size="4"></input> - <input type="text" name="txtPostNo2" maxlength="4" size="8"></input></td> 
                 </tr> 
                 <tr> 
                     <td width="100">住所１</td>
@@ -174,55 +125,15 @@ function cal() {
                 </tr> 
         </table>
         </br>
-        <button type="submit" style="width:100px;" name="btnSearch">検索</button>&nbsp;&nbsp;
-        <button type="submit" style="width:100px;" name="btnInsertUpdate">登録</button>&nbsp;&nbsp;
-        <button type="submit" style="width:100px;" name="btnClear">クリア</button>
+        <?php 
+        if($mode == "1") {
+            echo "<button type='submit' style='width:100px;' name='btnReSearch'>検索</button>";
+         } else {
+            echo "<button type='submit' style='width:100px;' name='btnInsertUpdate'>登録/更新</button>";
+         }
+         ?>
+         &nbsp;&nbsp;
         </br>
-        <table>
-        <tr> 
-            <td width="50"></td>
-            <td width="50"></td>
-            <td width="100"></td>
-            <td width="100"></td>
-            <td width="100"></td>
-            <td width="100"></td>
-            <td width="100"></td>
-            <td width="100">表示件数：</td>
-            <td width="100">&nbsp;&nbsp;&nbsp;&nbsp;<lable id="lblCount"><?php echo $dbCnt; ?>件</lable></td>
-        </tr> 
-        </table>
-        <table border="1" class="main">
-        <tr> 
-            <td width="50" style="background-color: greenyellow;"></td>
-            <td width="50" style="background-color: greenyellow;"></td>
-            <td width="100" style="background-color: greenyellow;">会員番号</td>
-            <td width="100" style="background-color: greenyellow;">名前</td> 
-            <td width="100" style="background-color: greenyellow;">性別</td> 
-            <td width="100" style="background-color: greenyellow;">郵便番号</td> 
-            <td width="100" style="background-color: greenyellow;">住所１</td> 
-            <td width="100" style="background-color: greenyellow;">住所２</td> 
-            <td width="100" style="background-color: greenyellow;">備考</td> 
-        </tr> 
-<?php 
-    $rdoCnt = 0;
-    foreach($result as $row){
-        $rdoCnt++;
-?>
-         <tr>
-            <td width="30"><button type="submit" style="width:100%;" name="btnSearch" onclick="cal()">選択</td> 
-            <td width="30"><button type="submit" style="width:100%;" name="btnDelete">削除</td> 
-            <td width="100" id="id"><?php echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT);?></td> 
-            <td width="100" name="name"><?php echo $row['NAME'];?></td> 
-            <td width="100" name="sex"><?php echo $row['SEX'];?></td>  
-            <td width="100" name="postno"><?php echo $row['POSTNO1']; echo "-"; echo$row['POSTNO2'];?></td>
-            <td width="100" name="address1"><?php echo $row['ADDRESS1'];?></td> 
-            <td width="100" name="address2"><?php echo $row['ADDRESS2'];?></td> 
-            <td width="100" name="biko"><?php echo $row['BIKO'];?></td>
-        </tr> 
-<?php 
-}
-?>
-        <table>
 </form>
     </body>
 </html>
