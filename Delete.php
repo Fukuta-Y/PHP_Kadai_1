@@ -1,19 +1,27 @@
 <?php
     try{
-        $pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8", "root", "");
-        $sql = " delete ";
-        $sql .= " from";
-        $sql .= "  T_USER_INFO";
-        $sql .= "  ID = :ID";
+        // DBコネクションを取得する
+        $conn = new PDO('mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8', 'root', '',
+                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
-        // 挿入する値は空のまま、SQL実行の準備をする
-        $stmt = $pdo->prepare($sql);
+        // トランザクションを開始する
+        $conn->beginTransaction();
+
+        // DELETE処理
+        $sql = "DELETE FROM T_USER_INFO WHERE ID = :ID";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
+        $stmt->execute();
+
+        // 削除件数を取得して表示する
+        $deleteCount = $stmt->rowCount();
         
-        // 挿入する値を配列に格納する
-        $params = array(':ID' => $ID);
-        
-        // 挿入する値が入った変数をexecuteにセットしてSQLを実行
-        $stmt->execute($params);
+        // コミット
+        $conn->commit();
+
+        if($deleteCount >=1){
+            print "削除 OK";
+        }
 
     }catch (PDOException $e){ 
         print('Error:'.$e->getMessage());

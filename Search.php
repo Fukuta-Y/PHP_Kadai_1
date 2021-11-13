@@ -1,7 +1,12 @@
 <?php
     $dbCnt = 0;
     try{
-        $pdo = new PDO("mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8", "root", "");
+        $conn = new PDO('mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8', 'root', '',
+        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+
+        // トランザクションを開始する
+        $conn->beginTransaction();
+        
         $sql = "select";
         $sql .= "    ID";
         $sql .= "   ,NAME";
@@ -29,44 +34,46 @@
             $sql .= "'";
         }
 
-        if($POSTNO1 != null && $POSTNO2 != null)
+        if($POSTNO != null)
         {
-            $sql .= "  AND POSTNO ='";
-            $sql .= $POSTNO1;
-            $sql .= $POSTNO2;
+            $sql .= " AND POSTNO ='";
+            $sql .= $POSTNO;
             $sql .= "'";
         }
 
         if($ADDRESS1 != null)
         {
-            $sql .= "  AND ADDRESS1 LIKE '%";
+            $sql .= " AND ADDRESS1 LIKE '%";
             $sql .= $ADDRESS1;
             $sql .= "%'";
         }
 
-
         if($ADDRESS2 != null)
         {
-            $sql .= "  AND ADDRESS2 LIKE '%";
+            $sql .= " AND ADDRESS2 LIKE '%";
             $sql .= $ADDRESS2;
             $sql .= "%'";
         }
 
         if($BIKO != null)
         {
-            $sql .= "  AND BIKO LIKE '%";
+            $sql .= " AND BIKO LIKE '%";
             $sql .= $BIKO;
             $sql .= "%'";
         }
 
-        $sth = $pdo->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetchAll();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
         // データ件数をカウントする
         foreach($result as $row){
             $dbCnt++;
         }
+
+        // コミット
+        $conn->commit();
+
     }catch (PDOException $e){ 
         print('Error:'.$e->getMessage());
         die();

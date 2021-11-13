@@ -6,8 +6,7 @@
         $ID = null;
         $NAME = null;
         $SEX = '0';
-        $POSTNO1 = null;
-        $POSTNO2 = null;
+        $POSTNO = null;
         $ADDRESS1 = null;
         $ADDRESS2 = null;
         $BIKO = null;
@@ -23,13 +22,7 @@
             //名前
             $NAME  = $_POST["txtName"];
             //性別
-            if($_POST["rdoSex"] == "男"){
-                $SEX  = '1';
-            }
-            else
-            {
-                $SEX  = '2';
-            }
+            $SEX  = $_POST["rdoSex"];
             //郵便番号
             $POSTNO  = $_POST["txtPostNo1"];
             $POSTNO .= $_POST["txtPostNo2"];
@@ -51,8 +44,7 @@
             $ID = null;
             $NAME = null;
             $SEX = '0';
-            $POSTNO1 = null;
-            $POSTNO2 = null;
+            $POSTNO = null;
             $ADDRESS1 = null;
             $ADDRESS2 = null;
             $BIKO = null;
@@ -69,33 +61,35 @@
             // 名前
             $NAME  = $_POST["txtName"];
 
-            // // 性別
-            // if($_POST["rdoSex"] == "男"){
-            //     $SEX  = '1';
-            // }
-            // else
-            // {
-            //     $SEX  = '2';
-            // }
+            // 性別
+            $SEX  = $_POST["rdoSex"];
 
-            // //郵便番号
-            // $POSTNO  = $_POST["txtPostNo1"];
-            // $POSTNO .= $_POST["txtPostNo2"];
+            //郵便番号
+            $POSTNO  = $_POST["txtPostNo1"];
+            $POSTNO .= $_POST["txtPostNo2"];
 
-            // //住所１
-            // $ADDRESS1  = $_POST["txtAddress1"];
+            //住所１
+            $ADDRESS1  = $_POST["txtAddress1"];
 
-            // //住所２
-            // $ADDRESS2  = $_POST["txtAddress2"];
+            //住所２
+            $ADDRESS2  = $_POST["txtAddress2"];
 
-            // //備考
-            // $BIKO  = $_POST["txtBiko"];
+            //備考
+            $BIKO  = $_POST["txtBiko"];
+
+            // 検索処理のphpファイルを呼び出し
+            include('Update.php');
+
+            //パラメータ初期化
+            $NAME  = null;
+            $SEX = '0';
+            $POSTNO = null;
+            $ADDRESS1 = null;
+            $ADDRESS2 = null;
+            $BIKO = null;
 
             // // 検索処理のphpファイルを呼び出し
-            // include('Update.php');
-
-            // // // 検索処理のphpファイルを呼び出し
-            // include('Search.php');
+            include('Search.php');
         }
         // 選択ボタン
         else if(isset($_POST['btnSearch'])){
@@ -109,12 +103,10 @@
             // 検索処理のphpファイルを呼び出し
             include('Delete.php');
 
-            //名前
-            $NAME  = $_POST["txtName"];
-
+            //パラメータ初期化
+            $NAME  = null;
             $SEX = '0';
-            $POSTNO1 = null;
-            $POSTNO2 = null;
+            $POSTNO = null;
             $ADDRESS1 = null;
             $ADDRESS2 = null;
             $BIKO = null;
@@ -154,7 +146,7 @@ function cal() {
         <table>
                 <tr> 
                     <td width="100">会員番号</td>
-                    <td width="280"><input type="text" name="txtMember" size="10" maxlength="7" value="1"></td> 
+                    <td width="280"><input type="text" name="txtMember" size="10" maxlength="7"></td> 
                 </tr> 
                 <tr> 
                     <td width="100">名前</td>
