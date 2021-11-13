@@ -36,8 +36,14 @@
         // 登録ボタン
         else if(isset($_POST['btnInsertUpdate'])){
 
-            // 会員番号
-            $ID  = $_POST["txtMember"];
+            // モードを取得
+            $mode= $_GET['mode'];
+
+            // 更新時のみ
+            if($mode == "3") {
+                // 会員番号
+                $ID  = $_POST["txtMember"];
+            }
 
             // 名前
             $NAME  = $_POST["txtName"];
@@ -68,9 +74,11 @@
             $ADDRESS1 = null;
             $ADDRESS2 = null;
             $BIKO = null;
+            
+            echo "<script type='text/javascript'>window.close();</script>";
 
-            // // 検索処理のphpファイルを呼び出し
-            include('Search.php');
+            // 検索処理のphpファイルを呼び出し
+            include('SearchList.php');
         }
     }
 ?>
@@ -92,7 +100,7 @@
         </table>
         <table>
                 <?php 
-                if($mode == "3" || $mode == "4") {
+                if($mode == "3") {
                     echo "<tr> ";
                     echo "<td width='100'>会員番号</td>";
                     echo "<td width='280'><input type='text' name='txtMember' size='10' maxlength='7'></td> ";
