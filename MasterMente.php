@@ -17,6 +17,7 @@
             $ID= $_GET['id'];
             // 検索処理のphpファイルを呼び出し
             include('Search.php');
+            //$ID= $_GET['id'];
         }
 
     }else{
@@ -24,7 +25,7 @@
         if(isset($_POST['btnReSearch'])){
 
             // 会員番号
-            $ID  = $_POST["txtMember"];
+            $ID= $_POST["txtID"];
             //名前
             $NAME  = $_POST["txtName"];
             //性別
@@ -38,42 +39,30 @@
             $ADDRESS2  = $_POST["txtAddress2"];
             //備考
             $BIKO  = $_POST["txtBiko"];
-
-            // エラーチェックの呼び出し
-            include('ErrCheck.php');
+            
+            // 自画面を閉じる
+            echo "<script type='text/javascript'>window.close();</script>";
 
             // 検索処理のphpファイルを呼び出し
             include('SearchList.php');
-        }
+        
         // 登録ボタン
-        else if(isset($_POST['btnInsertUpdate'])){
+        }else if(isset($_POST['btnInsertUpdate'])){
 
-            // モードを取得
-            $mode= $_GET['mode'];
-
-            // 更新時のみ
-            if($mode == "3") {
-                // 会員番号
-                $ID  = $_POST["txtMember"];
-            }
-
+            // 会員番号
+            $ID  = $_POST["txtId"];
             // 名前
             $NAME  = $_POST["txtName"];
-
             // 性別
             $SEX  = $_POST["rdoSex"];
-
-            //郵便番号
+            // 郵便番号
             $POSTNO  = $_POST["txtPostNo1"];
             $POSTNO .= $_POST["txtPostNo2"];
-
-            //住所１
+            // 住所１
             $ADDRESS1  = $_POST["txtAddress1"];
-
-            //住所２
+            // 住所２
             $ADDRESS2  = $_POST["txtAddress2"];
-
-            //備考
+            // 備考
             $BIKO  = $_POST["txtBiko"];
 
             // 検索処理のphpファイルを呼び出し
@@ -87,6 +76,7 @@
             $ADDRESS2 = null;
             $BIKO = null;
             
+            // 自画面を閉じる
             echo "<script type='text/javascript'>window.close();</script>";
 
             // 検索処理のphpファイルを呼び出し
@@ -116,6 +106,7 @@
                     echo "<tr> ";
                     echo "<td width='100'>会員番号</td>";
                     echo "<td width='280'>"; echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT); echo"</td> ";
+                    echo "<input type='hidden' name='txtId' maxlength='7' size='10' value=$row[ID]>";
                     echo "</tr> ";
                 }
                 ?>
