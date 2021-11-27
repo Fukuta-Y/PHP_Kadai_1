@@ -7,8 +7,6 @@
         // トランザクションを開始する
         $conn->beginTransaction();
 
-        $ID= $_GET['id'];
-
         // DELETE処理
         $sql = "DELETE FROM T_USER_INFO WHERE ID = :ID";
         $stmt = $conn->prepare($sql);
@@ -22,8 +20,7 @@
         $conn->commit();
 
         if($deleteCount >=1){
-            echo "<script type='text/javascript'>window.close();</script>";
-            include('Search.php');
+            print "削除 OK";
         }
 
     }catch (PDOException $e){ 

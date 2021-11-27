@@ -10,7 +10,7 @@
         $sql = "select";
         $sql .= "    ID";
         $sql .= "   ,NAME";
-        $sql .= "   ,SEX";
+        $sql .= "   ,CASE WHEN SEX = '1' THEN '男' WHEN SEX ='2' THEN '女' END AS 'SEX'";
         $sql .= "   ,MID(POSTNO FROM 1 FOR 3) AS POSTNO1";
         $sql .= "   ,MID(POSTNO FROM 4 FOR 4) AS POSTNO2";
         $sql .= "   ,ADDRESS1";
@@ -19,13 +19,6 @@
         $sql .= " from";
         $sql .= "  T_USER_INFO";
         $sql .= "  WHERE 1=1 ";
-
-        if($ID != null)
-        {
-            $sql .= " AND ID = '";
-            $sql .= $ID;
-            $sql .= "'";
-        }
 
         if($NAME != null)
         {
