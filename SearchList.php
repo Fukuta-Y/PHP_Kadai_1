@@ -1,6 +1,7 @@
 <?php
     $dbCnt = 0;
     $errMsg = "";
+    $SEX_NAME ="";
     // 初期表示時
     if($_SERVER["REQUEST_METHOD"] != "POST"){
         $ID = null;
@@ -13,6 +14,7 @@
 
         // 検索処理のphpファイルを呼び出し
         include('Search.php');
+
     }else{
         // 選択ボタン
         if(isset($_POST['btnSearch'])){
@@ -40,15 +42,30 @@
     }
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-//選択ボタンをクリック時
-function cal() {
-    alert('a');
-        var name2 = $(this).closest('tr').children("td").find('id=id').val();
-        alert('b');
-        alert(name2);
+function selectRow(obj,key)
+{
+    // URL
+    var url = "MasterMente.php?mode=3&id=";
+    url = url + key;
 
-        }
+    window.open(url, '', 'width=500,height=400');
+    
+}
+function deleteRow(obj,key)
+{
+    // 確認
+    if (!confirm("この行を削除しますか？"))
+        return;
+
+    // URL
+    var url = "Delete.php?id=";
+    url = url + key;
+
+    window.open(url, '', 'width=500,height=400');
+    
+}
 </script>
 <!DOCTYPE html>
 <html>
@@ -58,7 +75,7 @@ function cal() {
     <link href="design.css" rel="stylesheet">
 </head>
 <body>
-<form action="MasterMente.php" method="post">
+<form>
         </br>
         <a href="MasterMente.php?mode=1" onclick="window.open('MasterMente.php?mode=1', '', 'width=500,height=400'); return false;">検索条件</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -93,18 +110,31 @@ function cal() {
     $rdoCnt = 0;
     foreach($result as $row){
         $rdoCnt++;
+
+        // 性別判定
+        if($row['SEX'] =='1'){
+            $SEX_NAME ='男';
+        } else if($row['SEX'] =='2'){
+            $SEX_NAME ='女';
+        } else {
+            $SEX_NAME ='未指定';
+        }
 ?>
-         <tr>
-            <td width="30"><button type="submit" style="width:100%;" name="btnSearch" onclick="cal()">選択</td> 
-            <td width="30"><button type="submit" style="width:100%;" name="btnDelete">削除</td> 
-            <td width="100" id="id"><?php echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT);?></td> 
-            <td width="100" name="name"><?php echo $row['NAME'];?></td> 
-            <td width="100" name="sex"><?php echo $row['SEX'];?></td>  
-            <td width="100" name="postno"><?php echo $row['POSTNO1']; echo "-"; echo$row['POSTNO2'];?></td>
-            <td width="100" name="address1"><?php echo $row['ADDRESS1'];?></td> 
-            <td width="100" name="address2"><?php echo $row['ADDRESS2'];?></td> 
-            <td width="100" name="biko"><?php echo $row['BIKO'];?></td>
-        </tr> 
+        <tr class='chara'>
+        <?php
+        echo "<td width='30'><button type='submit' style='width:100%;' name='btnSearch' onclick='selectRow(this,$row[ID])'>選択</td> ";
+        ?>
+        <?php
+        echo "<td width='30'><button type='submit' style='width:100%;' name='btnDelete' onclick='deleteRow(this,$row[ID])'>削除</td> ";
+        ?>
+        <td width="100" id="id"><?php echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT);?></td> 
+        <td width="100" name="name"><?php echo $row['NAME'];?></td> 
+        <td width="100" name="sex"><?php echo $SEX_NAME;?></td>  
+        <td width="100" name="postno"><?php echo $row['POSTNO1']; echo "-"; echo$row['POSTNO2'];?></td>
+        <td width="100" name="address1"><?php echo $row['ADDRESS1'];?></td> 
+        <td width="100" name="address2"><?php echo $row['ADDRESS2'];?></td> 
+        <td width="100" name="biko"><?php echo $row['BIKO'];?></td>
+    </tr> 
 <?php 
 }
 ?>
