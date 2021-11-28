@@ -12,6 +12,7 @@
         $ADDRESS2 = null;
         $BIKO = null;
 
+        // 更新モードかどうか
         if($mode == "3")
         {
             $ID= $_GET['id'];
@@ -203,18 +204,23 @@
                         }
                     ?>
                     </td> 
+                    <tr> 
+                <tr> 
+                    <td colspan="2">
+                        </br>
+                        <center>
+                    <?php 
+                        // 検索モードの場合
+                        if($mode == "1") {
+                            echo "<button type='submit' style='width:100px;' name='btnReSearch'>検索</button>";
+                        } else {
+                            echo "<button type='submit' style='width:100px;' name='btnInsertUpdate'>登録/更新</button>";
+                        }
+                    ?>
+                    </center>
+                    </td>
                 </tr> 
-        </table>
-        </br>
-        <?php 
-        if($mode == "1") {
-            echo "<button type='submit' style='width:100px;' name='btnReSearch'>検索</button>";
-         } else {
-            echo "<button type='submit' style='width:100px;' name='btnInsertUpdate'>登録/更新</button>";
-         }
-         ?>
-         &nbsp;&nbsp;
-        </br>
+         </table>
 </form>
     </body>
 </html>
