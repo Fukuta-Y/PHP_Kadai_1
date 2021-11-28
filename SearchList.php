@@ -1,44 +1,69 @@
 <?php
     $dbCnt = 0;
     $errMsg = "";
-    $SEX_NAME ="";
+    $ID = null;
     // 初期表示時
     if($_SERVER["REQUEST_METHOD"] != "POST"){
-        $ID = null;
-        $NAME = null;
-        $SEX = '0';
-        $POSTNO = null;
-        $ADDRESS1 = null;
-        $ADDRESS2 = null;
-        $BIKO = null;
+
+        // // 隠し条件が１つでも設定されていた場合
+        // if($_POST["hdnName"] || $_POST["hdnSex"] || $_POST["hdnPostno"] || $_POST["hdnAddress1"] || $_POST["hdnAddress2"] ||  $_POST["hdnBiko"])
+        // {
+        //     //名前
+        //     $NAME  = $_POST["hdnName"];
+        //     //性別
+        //     $SEX  = $_POST["hdnSex"];
+        //     //郵便番号
+        //     $POSTNO  = $_POST["hdnPostno"];
+        //     //住所１
+        //     $ADDRESS1  = $_POST["hdnAddress1"];
+        //     //住所２
+        //     $ADDRESS2  = $_POST["hdnAddress2"];
+        //     //備考
+        //     $BIKO  = $_POST["hdnBiko"];
+        // }
+        // else
+        // {
+            //名前
+            $NAME = null;
+            //性別
+            $SEX = '0';
+            //郵便番号
+            $POSTNO = null;
+            //住所１
+            $ADDRESS1 = null;
+            //住所２
+            $ADDRESS2 = null;
+            //備考
+            $BIKO = null;
+        }
 
         // 検索処理のphpファイルを呼び出し
         include('Search.php');
-    }
+    // }
 ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
-// 選択ボタン
-function selectRow(obj,key)
-{
-    // URL
-    var url = "MasterMente.php?mode=3&id="+ key;
+    // 選択ボタン
+    function selectRow(key)
+    {
+        // URL
+        var url = "MasterMente.php?mode=3&id="+ key;
 
-    window.open(url, '', 'width=500,height=400');
-}
-// 削除ボタン
-function deleteRow(obj,key)
-{
-    // 確認
-    if (!confirm("この行を削除しますか？"))
-        return;
+        window.open(url, '', 'width=500,height=400');
+    }
+    // 削除ボタン
+    function deleteRow(key)
+    {
+        // 確認
+        if (!confirm("この行を削除しますか？")) return;
 
-    // URL
-    var url = "Delete.php?id="+ key;
-    
-    window.open(url, '', 'width=500,height=400');
-}
+        // URL
+        var url = "Delete.php?id="+ key;
+        
+        window.open(url, '', 'width=500,height=400');
+
+        // 自画面を、リロードする
+        window.opener.location.reload();
+    }
 </script>
 <!DOCTYPE html>
 <html>
@@ -53,8 +78,6 @@ function deleteRow(obj,key)
         <a href="MasterMente.php?mode=1" onclick="window.open('MasterMente.php?mode=1', '', 'width=500,height=400'); return false;">検索条件</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <a href="MasterMente.php?mode=2" onclick="window.open('MasterMente.php?mode=2', '', 'width=500,height=400'); return false;">新規登録</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="SearchList.php" onclick="location.reload();">更新</a>
         </br>
         <table>
         <tr> 
@@ -97,10 +120,10 @@ function deleteRow(obj,key)
 ?>
         <tr class='chara'>
         <?php
-        echo "<td width='30'><button type='submit' style='width:100%;' name='btnSearch' onclick='selectRow(this,$row[ID])'>選択</td> ";
+        echo "<td width='30'><button type='submit' style='width:100%;' name='btnSearch' onclick='selectRow($row[ID])'>選択</td> ";
         ?>
         <?php
-        echo "<td width='30'><button type='submit' style='width:100%;' name='btnDelete' onclick='deleteRow(this,$row[ID])'>削除</td> ";
+        echo "<td width='30'><button type='submit' style='width:100%;' name='btnDelete' onclick='deleteRow($row[ID])'>削除</td> ";
         ?>
         <td width="100" id="id"><?php echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT);?></td> 
         <td width="100" name="name"><?php echo $row['NAME'];?></td> 
@@ -110,6 +133,12 @@ function deleteRow(obj,key)
         <td width="100" name="address2"><?php echo $row['ADDRESS2'];?></td> 
         <td width="100" name="biko"><?php echo $row['BIKO'];?></td>
     </tr> 
+    <input type='hidden' name="hdnName" value="">
+    <input type='hidden' name="hdnSex" value="0">
+    <input type='hidden' name="hdnPostno" value="">
+    <input type='hidden' name="hdnAddress1" value="">
+    <input type='hidden' name="hdnAddress2" value="">
+    <input type='hidden' name="hdnBiko" value="">
 <?php 
 }
 ?>

@@ -22,33 +22,46 @@
         }
 
     }else{
-        // 検索ボタン
-        if(isset($_POST['btnReSearch'])){
+        // // 検索ボタン
+        // if(isset($_POST['btnReSearch'])){
 
-            // 会員番号
-            $ID= $_POST["txtID"];
-            //名前
-            $NAME  = $_POST["txtName"];
-            //性別
-            $SEX  = $_POST["rdoSex"];
-            //郵便番号
-            $POSTNO  = $_POST["txtPostNo1"];
-            $POSTNO .= $_POST["txtPostNo2"];
-            //住所１
-            $ADDRESS1  = $_POST["txtAddress1"];
-            //住所２
-            $ADDRESS2  = $_POST["txtAddress2"];
-            //備考
-            $BIKO  = $_POST["txtBiko"];
-            
-            // 自画面を閉じる
-            echo "<script type='text/javascript'>window.close();</script>";
 
-            // 検索処理のphpファイルを呼び出し
-            include('SearchList.php');
+        //     echo "はなくそ";
+
+            // // // 自画面を閉じる
+            // echo "<script type='text/javascript'>
+            // alert($_POST[’txtName’]);
+            // window.opener.document.getElementById('hdnName').value = $_POST[’txtName’];
+            // alert(window.opener.document.getElementById('hdnName').value);
+
+            // alert(test.value);
+            // // alert(document.getElementById('rdoSex').value);
+            // // alert(document.getElementById('txtPostNo1').value);
+            // // alert(document.getElementById('txtPostNo2').value);
+            // // alert(document.getElementById('txtAddress1').value);
+            // // alert(document.getElementById('txtAddress2').value);
+            // // alert(document.getElementById('txtBiko').value);
+
+            // // window.opener.document.getElementById('hdnName').value = document.getElementById('txtName').value;
+            // // window.opener.document.getElementById('hdnSex').value = document.getElementById('rdoSex').value;
+            // // window.opener.document.getElementById('hdnPostno').value = document.getElementById('txtPostNo1').value + document.getElementById('txtPostNo2').value;
+            // // window.opener.document.getElementById('hdnAddress1').value = document.getElementById('txtAddress1').value;
+            // // window.opener.document.getElementById('hdnAddress2').value = document.getElementById('txtAddress2').value;
+            // // window.opener.document.getElementById('hdnBiko').value = document.getElementById('txtBiko').value;
+
+            // // alert(window.opener.document.getElementById('hdnName').value);
+            // // alert(window.opener.document.getElementById('hdnSex').value);
+            // // alert(window.opener.document.getElementById('hdnPostno').value);
+            // // alert(window.opener.document.getElementById('hdnAddress1').value);
+            // // alert(window.opener.document.getElementById('hdnAddress2').value);
+            // // alert(window.opener.document.getElementById('hdnBiko').value);
+
+            // // window.opener.location.reload();
+            // window.close();
+            // </script>";
         
         // 登録ボタン
-        }else if(isset($_POST['btnInsertUpdate'])){
+        if(isset($_POST['btnInsertUpdate'])){
 
             // 会員番号
             $ID  = $_POST["txtId"];
@@ -69,19 +82,11 @@
             // 検索処理のphpファイルを呼び出し
             include('Update.php');
 
-            //パラメータ初期化
-            $NAME  = null;
-            $SEX = '0';
-            $POSTNO = null;
-            $ADDRESS1 = null;
-            $ADDRESS2 = null;
-            $BIKO = null;
-            
             // 自画面を閉じる
-            echo "<script type='text/javascript'>window.close();</script>";
-
-            // 検索処理のphpファイルを呼び出し
-            include('SearchList.php');
+            echo "<script type='text/javascript'>
+            window.opener.location.reload();
+            window.close();
+            </script>";
         }
     }
 ?>
@@ -213,8 +218,10 @@
                         // 検索モードの場合
                         if($mode == "1") {
                             echo "<button type='submit' style='width:100px;' name='btnReSearch'>検索</button>";
+                        } else if($mode == "2") {
+                            echo "<button type='submit' style='width:100px;' name='btnInsertUpdate'>新規登録</button>";
                         } else {
-                            echo "<button type='submit' style='width:100px;' name='btnInsertUpdate'>登録/更新</button>";
+                            echo "<button type='submit' style='width:100px;' name='btnInsertUpdate'>更新</button>";
                         }
                     ?>
                     </center>
@@ -224,3 +231,11 @@
 </form>
     </body>
 </html>
+<?php
+    // 検索ボタン
+    if(isset($_POST['btnReSearch'])){
+        // // 自画面を閉じる
+        echo "<script type='text/javascript'>
+        alert(document.getElementById('txtName').value);";
+    }
+?>
