@@ -14,45 +14,20 @@
 
         // 検索処理のphpファイルを呼び出し
         include('Search.php');
-
-    }else{
-        // 選択ボタン
-        if(isset($_POST['btnSearch'])){
-
-        }
-        // 削除ボタン
-        else if(isset($_POST['btnDelete'])){
-
-            $ID = $_POST["txtMember"];
-
-            // 検索処理のphpファイルを呼び出し
-            include('Delete.php');
-
-            //パラメータ初期化
-            $NAME  = null;
-            $SEX = '0';
-            $POSTNO = null;
-            $ADDRESS1 = null;
-            $ADDRESS2 = null;
-            $BIKO = null;
-
-            // 検索処理のphpファイルを呼び出し
-            include('Search.php');
-        }
     }
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
+// 選択ボタン
 function selectRow(obj,key)
 {
     // URL
-    var url = "MasterMente.php?mode=3&id=";
-    url = url + key;
+    var url = "MasterMente.php?mode=3&id="+ key;
 
     window.open(url, '', 'width=500,height=400');
-    
 }
+// 削除ボタン
 function deleteRow(obj,key)
 {
     // 確認
@@ -60,11 +35,9 @@ function deleteRow(obj,key)
         return;
 
     // URL
-    var url = "Delete.php?id=";
-    url = url + key;
-
-    window.open(url, '', 'width=500,height=400');
+    var url = "Delete.php?id="+ key;
     
+    window.open(url, '', 'width=500,height=400');
 }
 </script>
 <!DOCTYPE html>
@@ -80,6 +53,8 @@ function deleteRow(obj,key)
         <a href="MasterMente.php?mode=1" onclick="window.open('MasterMente.php?mode=1', '', 'width=500,height=400'); return false;">検索条件</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <a href="MasterMente.php?mode=2" onclick="window.open('MasterMente.php?mode=2', '', 'width=500,height=400'); return false;">新規登録</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="SearchList.php" onclick="location.reload();">更新</a>
         </br>
         <table>
         <tr> 
