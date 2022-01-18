@@ -3,43 +3,29 @@
     $errMsg = "";
     $ID = null;
     // 初期表示時
-    if($_SERVER["REQUEST_METHOD"] != "POST"){
-
-        // // 隠し条件が１つでも設定されていた場合
-        // if($_POST["hdnName"] || $_POST["hdnSex"] || $_POST["hdnPostno"] || $_POST["hdnAddress1"] || $_POST["hdnAddress2"] ||  $_POST["hdnBiko"])
-        // {
-        //     //名前
-        //     $NAME  = $_POST["hdnName"];
-        //     //性別
-        //     $SEX  = $_POST["hdnSex"];
-        //     //郵便番号
-        //     $POSTNO  = $_POST["hdnPostno"];
-        //     //住所１
-        //     $ADDRESS1  = $_POST["hdnAddress1"];
-        //     //住所２
-        //     $ADDRESS2  = $_POST["hdnAddress2"];
-        //     //備考
-        //     $BIKO  = $_POST["hdnBiko"];
-        // }
-        // else
-        // {
-            //名前
-            $NAME = null;
-            //性別
-            $SEX = '0';
-            //郵便番号
-            $POSTNO = null;
-            //住所１
-            $ADDRESS1 = null;
-            //住所２
-            $ADDRESS2 = null;
-            //備考
-            $BIKO = null;
-        }
-
+    if($_SERVER["REQUEST_METHOD"] != "POST")
+    {
+        //名前
+        $NAME = null;
+        //性別
+        $SEX = '0';
+        //郵便番号
+        $POSTNO = null;
+        //住所１
+        $ADDRESS1 = null;
+        //住所２
+        $ADDRESS2 = null;
+        //備考
+        $BIKO = null;
+        
         // 検索処理のphpファイルを呼び出し
         include('Search.php');
-    // }
+    }
+    else
+    {
+        // 検索処理のphpファイルを呼び出し
+        include('Search.php');
+    }
 ?>
 <script type="text/javascript">
     // 選択ボタン
@@ -64,6 +50,14 @@
         // 自画面を、リロードする
         window.opener.location.reload();
     }
+    function SearchRow()
+    {
+        // 検索条件画面を呼び出す
+        window.open('MasterMente.php?mode=1', '', 'width=500,height=400');
+
+        // 検索処理のphpファイルを呼び出し
+        include('Search.php');
+    }
 </script>
 <!DOCTYPE html>
 <html>
@@ -73,9 +67,9 @@
     <link href="design.css" rel="stylesheet">
 </head>
 <body>
-<form>
+<form name="form1">
         </br>
-        <a href="MasterMente.php?mode=1" onclick="window.open('MasterMente.php?mode=1', '', 'width=500,height=400'); return false;">検索条件</a>
+        <a href="" onclick="SearchRow(); return false;">検索条件</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <a href="MasterMente.php?mode=2" onclick="window.open('MasterMente.php?mode=2', '', 'width=500,height=400'); return false;">新規登録</a>
         </br>
@@ -133,7 +127,6 @@
         <td width="100" name="address2"><?php echo $row['ADDRESS2'];?></td> 
         <td width="100" name="biko"><?php echo $row['BIKO'];?></td>
     </tr> 
-    <input type='hidden' name="hdnName" value="">
     <input type='hidden' name="hdnSex" value="0">
     <input type='hidden' name="hdnPostno" value="">
     <input type='hidden' name="hdnAddress1" value="">

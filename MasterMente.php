@@ -22,14 +22,13 @@
         }
 
     }else{
-        // // 検索ボタン
-        // if(isset($_POST['btnReSearch'])){
-
-
-        //     echo "はなくそ";
-
-            // // // 自画面を閉じる
-            // echo "<script type='text/javascript'>
+        // 検索ボタン
+        if(isset($_POST['btnReSearch'])){
+    echo "<script type='text/javascript'>
+    window.opener.document.form1.hdnName.value = 'せいや';
+        window.opener.location.reload();
+        window.close();
+        </script>";
             // alert($_POST[’txtName’]);
             // window.opener.document.getElementById('hdnName').value = $_POST[’txtName’];
             // alert(window.opener.document.getElementById('hdnName').value);
@@ -61,7 +60,7 @@
             // </script>";
         
         // 登録ボタン
-        if(isset($_POST['btnInsertUpdate'])){
+        } else if(isset($_POST['btnInsertUpdate'])){
 
             // 会員番号
             $ID  = $_POST["txtId"];
