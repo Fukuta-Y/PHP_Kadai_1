@@ -18,46 +18,26 @@
             $ID= $_GET['id'];
             // 検索処理のphpファイルを呼び出し
             include('Search.php');
-            //$ID= $_GET['id'];
         }
 
     }else{
         // 検索ボタン
         if(isset($_POST['btnReSearch'])){
-    echo "<script type='text/javascript'>
-    window.opener.document.form1.hdnName.value = 'せいや';
-        window.opener.location.reload();
-        window.close();
-        </script>";
-            // alert($_POST[’txtName’]);
-            // window.opener.document.getElementById('hdnName').value = $_POST[’txtName’];
-            // alert(window.opener.document.getElementById('hdnName').value);
+            
+            session_start();
+            $_SESSION['txtName'] = $_POST["txtName"];
+            $_SESSION['rdoSex'] = $_POST["rdoSex"];
+            $_SESSION['txtPostNo1'] = $_POST["txtPostNo1"];
+            $_SESSION['txtPostNo2'] = $_POST["txtPostNo2"];
+            $_SESSION['txtAddress1'] = $_POST["txtAddress1"];
+            $_SESSION['txtAddress2'] = $_POST["txtAddress2"];
+            $_SESSION['txtBiko'] = $_POST["txtBiko"];
 
-            // alert(test.value);
-            // // alert(document.getElementById('rdoSex').value);
-            // // alert(document.getElementById('txtPostNo1').value);
-            // // alert(document.getElementById('txtPostNo2').value);
-            // // alert(document.getElementById('txtAddress1').value);
-            // // alert(document.getElementById('txtAddress2').value);
-            // // alert(document.getElementById('txtBiko').value);
-
-            // // window.opener.document.getElementById('hdnName').value = document.getElementById('txtName').value;
-            // // window.opener.document.getElementById('hdnSex').value = document.getElementById('rdoSex').value;
-            // // window.opener.document.getElementById('hdnPostno').value = document.getElementById('txtPostNo1').value + document.getElementById('txtPostNo2').value;
-            // // window.opener.document.getElementById('hdnAddress1').value = document.getElementById('txtAddress1').value;
-            // // window.opener.document.getElementById('hdnAddress2').value = document.getElementById('txtAddress2').value;
-            // // window.opener.document.getElementById('hdnBiko').value = document.getElementById('txtBiko').value;
-
-            // // alert(window.opener.document.getElementById('hdnName').value);
-            // // alert(window.opener.document.getElementById('hdnSex').value);
-            // // alert(window.opener.document.getElementById('hdnPostno').value);
-            // // alert(window.opener.document.getElementById('hdnAddress1').value);
-            // // alert(window.opener.document.getElementById('hdnAddress2').value);
-            // // alert(window.opener.document.getElementById('hdnBiko').value);
-
-            // // window.opener.location.reload();
-            // window.close();
-            // </script>";
+            // 自画面を閉じる
+            echo "<script type='text/javascript'>
+            window.opener.location.reload();
+            window.close();
+            </script>";
         
         // 登録ボタン
         } else if(isset($_POST['btnInsertUpdate'])){

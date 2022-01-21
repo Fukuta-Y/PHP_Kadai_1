@@ -2,30 +2,49 @@
     $dbCnt = 0;
     $errMsg = "";
     $ID = null;
+    //名前
+    $NAME = null;
+    //性別
+    $SEX = '0';
+    //郵便番号
+    $POSTNO = null;
+    //住所１
+    $ADDRESS1 = null;
+    //住所２
+    $ADDRESS2 = null;
+    //備考
+    $BIKO = null;
+
     // 初期表示時
     if($_SERVER["REQUEST_METHOD"] != "POST")
     {
-        //名前
-        $NAME = null;
-        //性別
-        $SEX = '0';
-        //郵便番号
-        $POSTNO = null;
-        //住所１
-        $ADDRESS1 = null;
-        //住所２
-        $ADDRESS2 = null;
-        //備考
-        $BIKO = null;
+        session_start();
         
-        // 検索処理のphpファイルを呼び出し
-        include('Search.php');
+        //名前
+        $NAME = $_SESSION['txtName'];
+
+        //性別
+        $SEX = $_SESSION['rdoSex'];
+    
+        //郵便番号
+        $POSTNO = $_SESSION['txtPostNo1'];
+    
+        //郵便番号
+        $POSTNO = $POSTNO && $_SESSION['txtPostNo2'];
+
+        //住所１
+        $ADDRESS1 =  $_SESSION['txtAddress1'];
+
+        //住所２
+        $ADDRESS2 = $_SESSION['txtAddress2'];
+        
+        //備考
+        $BIKO = $_SESSION['txtBiko'];
+        
     }
-    else
-    {
-        // 検索処理のphpファイルを呼び出し
-        include('Search.php');
-    }
+
+    // 検索処理のphpファイルを呼び出し
+    include('Search.php');
 ?>
 <script type="text/javascript">
     // 選択ボタン
