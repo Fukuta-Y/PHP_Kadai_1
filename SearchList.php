@@ -1,48 +1,30 @@
 <?php
     $dbCnt = 0;
     $errMsg = "";
-    $ID = null;
-    //名前
-    $NAME = null;
-    //性別
-    $SEX = '0';
-    //郵便番号
-    $POSTNO = null;
-    //住所１
-    $ADDRESS1 = null;
-    //住所２
-    $ADDRESS2 = null;
-    //備考
-    $BIKO = null;
 
-    // 初期表示時
-    if($_SERVER["REQUEST_METHOD"] != "POST")
+    $ID = null; //ID
+    $NAME = null; //名前
+    $SEX = '0';  //性別
+    $POSTNO = null; //郵便番号
+    $ADDRESS1 = null; //住所１
+    $ADDRESS2 = null; //住所２
+    $BIKO = null; //備考
+
+    session_start(); // セッション開始
+
+    // 初期表示時でセッションが開始、存在している場合（セッションの性別が存在しないのは初回だけのため）
+    if(isset($_SESSION['rdoSex']))
     {
-        session_start();
-        
-        //名前
-        $NAME = $_SESSION['txtName'];
-
-        //性別
-        $SEX = $_SESSION['rdoSex'];
-    
-        //郵便番号
-        $POSTNO = $_SESSION['txtPostNo1'];
-    
-        //郵便番号
-        $POSTNO = $POSTNO && $_SESSION['txtPostNo2'];
-
-        //住所１
-        $ADDRESS1 =  $_SESSION['txtAddress1'];
-
-        //住所２
-        $ADDRESS2 = $_SESSION['txtAddress2'];
-        
-        //備考
-        $BIKO = $_SESSION['txtBiko'];
-        
+        $NAME = $_SESSION['txtName'];  //名前
+        $SEX = $_SESSION['rdoSex']; //性別
+        $POSTNO = $_SESSION['txtPostNo1']; //郵便番号1
+        $POSTNO = $POSTNO && $_SESSION['txtPostNo2']; //郵便番号2
+        $ADDRESS1 =  $_SESSION['txtAddress1'];  //住所１
+        $ADDRESS2 = $_SESSION['txtAddress2']; //住所２
+        $BIKO = $_SESSION['txtBiko']; //備考
+        session_destroy(); // セッション削除
     }
-
+    
     // 検索処理のphpファイルを呼び出し
     include('Search.php');
 ?>
@@ -50,10 +32,8 @@
     // 選択ボタン
     function selectRow(key)
     {
-        // URL
-        var url = "MasterMente.php?mode=3&id="+ key;
-
-        window.open(url, '', 'width=500,height=400');
+        // 更新画面を呼び出す
+        window.open("MasterMente.php?mode=3&id=" + key, '', 'width=500,height=400');
     }
     // 削除ボタン
     function deleteRow(key)
@@ -61,21 +41,23 @@
         // 確認
         if (!confirm("この行を削除しますか？")) return;
 
-        // URL
-        var url = "Delete.php?id="+ key;
-        
-        window.open(url, '', 'width=500,height=400');
+        // 削除画面を呼び出す
+        window.open("Delete.php?id=" + key, '', 'width=500,height=400');
 
         // 自画面を、リロードする
         window.opener.location.reload();
     }
-    function SearchRow()
+    // 検索条件リンク
+    function searchRow()
     {
         // 検索条件画面を呼び出す
         window.open('MasterMente.php?mode=1', '', 'width=500,height=400');
-
-        // 検索処理のphpファイルを呼び出し
-        include('Search.php');
+    }
+    // 新規登録リンク
+    function insertRow()
+    {
+        // 新規登録画面を呼び出す
+        window.open('MasterMente.php?mode=2', '', 'width=500,height=400');
     }
 </script>
 <!DOCTYPE html>
@@ -88,9 +70,9 @@
 <body>
 <form name="form1">
         </br>
-        <a href="" onclick="SearchRow(); return false;">検索条件</a>
+        <a href="" onclick="searchRow(); return false;">検索条件</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="MasterMente.php?mode=2" onclick="window.open('MasterMente.php?mode=2', '', 'width=500,height=400'); return false;">新規登録</a>
+        <a href="" onclick="insertRow(); return false;">新規登録</a>
         </br>
         <table>
         <tr> 
@@ -146,11 +128,6 @@
         <td width="100" name="address2"><?php echo $row['ADDRESS2'];?></td> 
         <td width="100" name="biko"><?php echo $row['BIKO'];?></td>
     </tr> 
-    <input type='hidden' name="hdnSex" value="0">
-    <input type='hidden' name="hdnPostno" value="">
-    <input type='hidden' name="hdnAddress1" value="">
-    <input type='hidden' name="hdnAddress2" value="">
-    <input type='hidden' name="hdnBiko" value="">
 <?php 
 }
 ?>

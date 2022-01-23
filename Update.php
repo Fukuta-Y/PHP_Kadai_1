@@ -35,6 +35,12 @@
                 $ID = $row['ID'];
             }
 
+            // 初回時はNULLのため
+            if($ID == null)
+            {
+                $ID ='1';
+            }
+
             $sql = " insert into ";
             $sql .= " T_USER_INFO (";
             $sql .= "    ID";

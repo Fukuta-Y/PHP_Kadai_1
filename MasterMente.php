@@ -2,17 +2,19 @@
     $errMsg = "";
     // 初期表示時
     if($_SERVER["REQUEST_METHOD"] != "POST"){
+
+        // 画面モードを取得する
         $mode= $_GET['mode'];
 
-        $ID = null;
-        $NAME = null;
-        $SEX = '0';
-        $POSTNO = null;
-        $ADDRESS1 = null;
-        $ADDRESS2 = null;
-        $BIKO = null;
+        $ID = null; //ID
+        $NAME = null; //名前
+        $SEX = '0';  //性別
+        $POSTNO = null; //郵便番号
+        $ADDRESS1 = null; //住所１
+        $ADDRESS2 = null; //住所２
+        $BIKO = null; //備考
 
-        // 更新モードかどうか
+        // 選択画面の場合
         if($mode == "3")
         {
             $ID= $_GET['id'];
@@ -23,50 +25,36 @@
     }else{
         // 検索ボタン
         if(isset($_POST['btnReSearch'])){
-            
-            session_start();
-            $_SESSION['txtName'] = $_POST["txtName"];
-            $_SESSION['rdoSex'] = $_POST["rdoSex"];
-            $_SESSION['txtPostNo1'] = $_POST["txtPostNo1"];
-            $_SESSION['txtPostNo2'] = $_POST["txtPostNo2"];
-            $_SESSION['txtAddress1'] = $_POST["txtAddress1"];
-            $_SESSION['txtAddress2'] = $_POST["txtAddress2"];
-            $_SESSION['txtBiko'] = $_POST["txtBiko"];
+            session_start(); // セッション開始
+            $_SESSION['txtName'] = $_POST["txtName"];// 名前
+            $_SESSION['rdoSex'] = $_POST["rdoSex"]; // 性別
+            $_SESSION['txtPostNo1'] = $_POST["txtPostNo1"]; // 郵便番号1
+            $_SESSION['txtPostNo2'] = $_POST["txtPostNo2"]; // 郵便番号2
+            $_SESSION['txtAddress1'] = $_POST["txtAddress1"];  // 住所1
+            $_SESSION['txtAddress2'] = $_POST["txtAddress2"];  // 住所2
+            $_SESSION['txtBiko'] = $_POST["txtBiko"];  // 備考
 
-            // 自画面を閉じる
-            echo "<script type='text/javascript'>
-            window.opener.location.reload();
-            window.close();
-            </script>";
-        
         // 登録ボタン
         } else if(isset($_POST['btnInsertUpdate'])){
 
-            // 会員番号
-            $ID  = $_POST["txtId"];
-            // 名前
-            $NAME  = $_POST["txtName"];
-            // 性別
-            $SEX  = $_POST["rdoSex"];
-            // 郵便番号
-            $POSTNO  = $_POST["txtPostNo1"];
-            $POSTNO .= $_POST["txtPostNo2"];
-            // 住所１
-            $ADDRESS1  = $_POST["txtAddress1"];
-            // 住所２
-            $ADDRESS2  = $_POST["txtAddress2"];
-            // 備考
-            $BIKO  = $_POST["txtBiko"];
+            $ID  = $_POST["txtId"]; // 会員番号
+            $NAME  = $_POST["txtName"]; // 名前
+            $SEX  = $_POST["rdoSex"]; // 性別
+            $POSTNO  = $_POST["txtPostNo1"]; // 郵便番号1
+            $POSTNO .= $_POST["txtPostNo2"]; // 郵便番号2
+            $ADDRESS1  = $_POST["txtAddress1"]; // 住所１
+            $ADDRESS2  = $_POST["txtAddress2"]; // 住所２
+            $BIKO  = $_POST["txtBiko"]; // 備考
 
             // 検索処理のphpファイルを呼び出し
             include('Update.php');
-
-            // 自画面を閉じる
-            echo "<script type='text/javascript'>
-            window.opener.location.reload();
-            window.close();
-            </script>";
         }
+
+        // 自画面を閉じる
+        echo "<script type='text/javascript'>
+        window.opener.location.reload();
+        window.close();
+        </script>";
     }
 ?>
 <!DOCTYPE html>
@@ -210,11 +198,3 @@
 </form>
     </body>
 </html>
-<?php
-    // 検索ボタン
-    if(isset($_POST['btnReSearch'])){
-        // // 自画面を閉じる
-        echo "<script type='text/javascript'>
-        alert(document.getElementById('txtName').value);";
-    }
-?>
