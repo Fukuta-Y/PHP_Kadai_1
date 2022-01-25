@@ -10,7 +10,7 @@
         $sql = "select";
         $sql .= "    ID";
         $sql .= "   ,NAME";
-        $sql .= "   ,SEX";
+        $sql .= "   ,CASE SEX WHEN '1' THEN '男' WHEN '2' THEN '女' ELSE '未設定' END AS SEX";
         $sql .= "   ,MID(POSTNO FROM 1 FOR 3) AS POSTNO1";
         $sql .= "   ,MID(POSTNO FROM 4 FOR 4) AS POSTNO2";
         $sql .= "   ,ADDRESS1";

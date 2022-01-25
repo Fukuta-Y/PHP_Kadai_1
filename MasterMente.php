@@ -103,18 +103,16 @@
                     if($row['SEX'] == "1"){
                         echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
                         echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                        echo "<input type='radio' name='rdoSex' value='0'>未指定</input>";
                     }
                     else if($row['SEX'] == "2"){
                         echo "<input type='radio' name='rdoSex' value='1'>男</input>";
                         echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
-                        echo "<input type='radio' name='rdoSex' value='0'>未指定</input>";
                     }
-                    else{
-                        echo "<input type='radio' name='rdoSex' value='1'>男</input>";
-                        echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                        echo "<input type='radio' name='rdoSex' value='0' checked='checked'>未指定</input>";
-                    }
+                }
+                else if($mode=="2")
+                {
+                    echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
+                    echo "<input type='radio' name='rdoSex' value='2'>女</input>";
                 }
                 else
                 {

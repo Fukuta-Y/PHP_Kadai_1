@@ -67,8 +67,30 @@
     <title>SearchList.php</title>
     <link href="design.css" rel="stylesheet">
 </head>
-<body>
-<form name="form1">
+<body<?php
+    $errMsg = "";
+  
+
+    if($NAME==null)
+    {
+        $errMsg.= "名前が未入力です。";
+    }
+
+
+
+?>>
+<form name="form1"><?php
+    $errMsg = "";
+  
+
+    if($NAME==null)
+    {
+        $errMsg.= "名前が未入力です。";
+    }
+
+
+
+?>
         </br>
         <a href="" onclick="searchRow(); return false;">検索条件</a>
         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -99,19 +121,10 @@
             <td width="100" style="background-color: greenyellow;">住所２</td> 
             <td width="100" style="background-color: greenyellow;">備考</td> 
         </tr> 
-<?php 
+<?php
     $rdoCnt = 0;
     foreach($result as $row){
         $rdoCnt++;
-
-        // 性別判定
-        if($row['SEX'] =='1'){
-            $SEX_NAME ='男';
-        } else if($row['SEX'] =='2'){
-            $SEX_NAME ='女';
-        } else {
-            $SEX_NAME ='未指定';
-        }
 ?>
         <tr class='chara'>
         <?php
@@ -122,7 +135,7 @@
         ?>
         <td width="100" id="id"><?php echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT);?></td> 
         <td width="100" name="name"><?php echo $row['NAME'];?></td> 
-        <td width="100" name="sex"><?php echo $SEX_NAME;?></td>  
+        <td width="100" name="sex"><?php echo $row['SEX'];?></td> 
         <td width="100" name="postno"><?php echo $row['POSTNO1']; echo "-"; echo$row['POSTNO2'];?></td>
         <td width="100" name="address1"><?php echo $row['ADDRESS1'];?></td> 
         <td width="100" name="address2"><?php echo $row['ADDRESS2'];?></td> 
