@@ -28,11 +28,17 @@
     include('Search.php');
 ?>
 <script type="text/javascript">
+
+    // 高さと幅を計算する
+    var w = ( screen.width-500 ) / 2;
+    var h = ( screen.height-400 ) / 2;
+
     // 選択ボタン
     function selectRow(key)
     {
         // 更新画面を呼び出す
-        window.open("MasterMente.php?mode=3&id=" + key, '', 'width=500,height=400');
+        window.open("MasterMente.php?mode=3&id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
+
     }
     // 削除ボタン
     function deleteRow(key)
@@ -41,7 +47,7 @@
         if (!confirm("この行を削除しますか？")) return;
 
         // 削除画面を呼び出す
-        window.open("Delete.php?id=" + key, '', 'width=500,height=400');
+        window.open("Delete.php?id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
 
         // 自画面を、リロードする
         window.opener.location.reload();
@@ -50,13 +56,13 @@
     function searchRow()
     {
         // 検索条件画面を呼び出す
-        window.open('MasterMente.php?mode=1', '', 'width=500,height=400');
+        window.open('MasterMente.php?mode=1', '', "width=500,height=400,left=" + w + ",top=" + h);
     }
     // 新規登録リンク
     function insertRow()
     {
         // 新規登録画面を呼び出す
-        window.open('MasterMente.php?mode=2', '', 'width=500,height=400');
+        window.open('MasterMente.php?mode=2', '',  "width=500,height=400,left=" + w + ",top=" + h);
     }
 </script>
 <!DOCTYPE html>
