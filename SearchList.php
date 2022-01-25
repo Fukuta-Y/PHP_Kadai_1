@@ -1,6 +1,5 @@
 <?php
     $dbCnt = 0;
-    $errMsg = "";
 
     $ID = null; //ID
     $NAME = null; //名前
@@ -67,60 +66,38 @@
     <title>SearchList.php</title>
     <link href="design.css" rel="stylesheet">
 </head>
-<body<?php
-    $errMsg = "";
-  
-
-    if($NAME==null)
-    {
-        $errMsg.= "名前が未入力です。";
-    }
-
-
-
-?>>
-<form name="form1"><?php
-    $errMsg = "";
-  
-
-    if($NAME==null)
-    {
-        $errMsg.= "名前が未入力です。";
-    }
-
-
-
-?>
-        </br>
-        <a href="" onclick="searchRow(); return false;">検索条件</a>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="" onclick="insertRow(); return false;">新規登録</a>
-        </br>
-        <table>
-        <tr> 
-            <td width="50"></td>
-            <td width="50"></td>
-            <td width="100"></td>
-            <td width="100"></td>
-            <td width="100"></td>
-            <td width="100"></td>
-            <td width="100"></td>
-            <td width="100">表示件数：</td>
-            <td width="100">&nbsp;&nbsp;&nbsp;&nbsp;<lable id="lblCount"><?php echo $dbCnt; ?>件</lable></td>
-        </tr> 
-        </table>
-        <table border="1" class="main">
-        <tr> 
-            <td width="50" style="background-color: greenyellow;"></td>
-            <td width="50" style="background-color: greenyellow;"></td>
-            <td width="100" style="background-color: greenyellow;">会員番号</td>
-            <td width="100" style="background-color: greenyellow;">名前</td> 
-            <td width="100" style="background-color: greenyellow;">性別</td> 
-            <td width="100" style="background-color: greenyellow;">郵便番号</td> 
-            <td width="100" style="background-color: greenyellow;">住所１</td> 
-            <td width="100" style="background-color: greenyellow;">住所２</td> 
-            <td width="100" style="background-color: greenyellow;">備考</td> 
-        </tr> 
+<body>
+<form name="form1">
+    </br>
+    <a href="" onclick="searchRow(); return false;">検索条件</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="" onclick="insertRow(); return false;">新規登録</a>
+    </br>
+    <table>
+    <tr> 
+        <td width="50"></td>
+        <td width="50"></td>
+        <td width="100"></td>
+        <td width="100"></td>
+        <td width="100"></td>
+        <td width="100"></td>
+        <td width="100"></td>
+        <td width="100">表示件数：</td>
+        <td width="100">&nbsp;&nbsp;&nbsp;&nbsp;<lable id="lblCount"><?php echo $dbCnt; ?>件</lable></td>
+    </tr> 
+    </table>
+    <table border="1" class="main">
+    <tr> 
+        <td width="50" style="background-color: greenyellow;"></td>
+        <td width="50" style="background-color: greenyellow;"></td>
+        <td width="100" style="background-color: greenyellow;">会員番号</td>
+        <td width="100" style="background-color: greenyellow;">名前</td> 
+        <td width="100" style="background-color: greenyellow;">性別</td> 
+        <td width="100" style="background-color: greenyellow;">郵便番号</td> 
+        <td width="100" style="background-color: greenyellow;">住所１</td> 
+        <td width="100" style="background-color: greenyellow;">住所２</td> 
+        <td width="100" style="background-color: greenyellow;">備考</td> 
+    </tr> 
 <?php
     $rdoCnt = 0;
     foreach($result as $row){
