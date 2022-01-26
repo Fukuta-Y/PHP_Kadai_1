@@ -12,8 +12,7 @@
     session_start(); // セッション開始
 
     // 初期表示時でセッションが開始、存在している場合（セッションの性別が存在しないのは初回だけのため）
-    if(isset($_SESSION['rdoSex']))
-    {
+    if(isset($_SESSION['rdoSex'])) {
         $NAME = $_SESSION['txtName'];  //名前
         $SEX = $_SESSION['rdoSex']; //性別
         $POSTNO = $_SESSION['txtPostNo1']; //郵便番号1
@@ -34,15 +33,13 @@
     var h = ( screen.height-400 ) / 2;
 
     // 選択ボタン
-    function selectRow(key)
-    {
+    function selectRow(key) {
         // 更新画面を呼び出す
         window.open("MasterMente.php?mode=3&id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
 
     }
     // 削除ボタン
-    function deleteRow(key)
-    {
+    function deleteRow(key) {
         // 確認
         if (!confirm("この行を削除しますか？")) return;
 
@@ -53,14 +50,12 @@
         window.opener.location.reload();
     }
     // 検索条件リンク
-    function searchRow()
-    {
+    function searchRow() {
         // 検索条件画面を呼び出す
         window.open('MasterMente.php?mode=1', '', "width=500,height=400,left=" + w + ",top=" + h);
     }
     // 新規登録リンク
-    function insertRow()
-    {
+    function insertRow() {
         // 新規登録画面を呼び出す
         window.open('MasterMente.php?mode=2', '',  "width=500,height=400,left=" + w + ",top=" + h);
     }
@@ -106,7 +101,7 @@
     </tr> 
 <?php
     $rdoCnt = 0;
-    foreach($result as $row){
+    foreach($result as $row) {
         $rdoCnt++;
 ?>
         <tr class='chara'>

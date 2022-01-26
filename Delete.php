@@ -21,12 +21,12 @@
         // コミット
         $conn->commit();
 
-        if($deleteCount >=1){
+        if($deleteCount >=1) {
             echo "<script type='text/javascript'>window.close();</script>";
             include('Search.php');
         }
 
-    }catch (PDOException $e){ 
+    } catch (PDOException $e) { 
         print('Error:'.$e->getMessage());
         die();
     }

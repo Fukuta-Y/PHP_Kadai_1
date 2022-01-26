@@ -20,50 +20,43 @@
         $sql .= "  T_USER_INFO";
         $sql .= "  WHERE 1=1 ";
 
-        if($ID != null)
-        {
+        if($ID != null) {
             $sql .= " AND ID = '";
             $sql .= $ID;
             $sql .= "'";
         }
 
-        if($NAME != null)
-        {
+        if($NAME != null) {
             $sql .= " AND NAME LIKE '%";
             $sql .= $NAME;
             $sql .= "%'";
         }
 
-        if($SEX != '0')
-        {
+        if($SEX != '0') {
             $sql .= " AND SEX ='";
             $sql .= $SEX;
             $sql .= "'";
         }
 
-        if($POSTNO != null)
-        {
+        if($POSTNO != null) {
             $sql .= " AND POSTNO ='";
             $sql .= $POSTNO;
             $sql .= "'";
         }
 
-        if($ADDRESS1 != null)
-        {
+        if($ADDRESS1 != null) {
             $sql .= " AND ADDRESS1 LIKE '%";
             $sql .= $ADDRESS1;
             $sql .= "%'";
         }
 
-        if($ADDRESS2 != null)
-        {
+        if($ADDRESS2 != null) {
             $sql .= " AND ADDRESS2 LIKE '%";
             $sql .= $ADDRESS2;
             $sql .= "%'";
         }
 
-        if($BIKO != null)
-        {
+        if($BIKO != null) {
             $sql .= " AND BIKO LIKE '%";
             $sql .= $BIKO;
             $sql .= "%'";
@@ -74,14 +67,14 @@
         $result = $stmt->fetchAll();
 
         // データ件数をカウントする
-        foreach($result as $row){
+        foreach($result as $row) {
             $dbCnt++;
         }
 
         // コミット
         $conn->commit();
 
-    }catch (PDOException $e){ 
+    } catch (PDOException $e){ 
         print('Error:'.$e->getMessage());
         die();
     }
