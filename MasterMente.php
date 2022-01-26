@@ -1,12 +1,10 @@
 <?php
     $errMsg=null;
-
     // 初期表示時
-    if($_SERVER["REQUEST_METHOD"] != "POST"){
+    if($_SERVER["REQUEST_METHOD"] != "POST") {
 
         // 画面モードを取得する
         $mode= $_GET['mode'];
-
         session_start(); // セッション開始
         // 画面モードを取得する
         $_SESSION['mode'] = $mode;
@@ -15,41 +13,64 @@
         $NAME = null; //名前
         $SEX = '0';  //性別
         $POSTNO = null; //郵便番号
-        $POSTNO1 = null; //郵便番号1
-        $POSTNO2 = null; //郵便番号2
+        $POS1 = null; //郵便番号1
+        $POS2 = null; //郵便番号2
         $ADDRESS1 = null; //住所1
         $ADDRESS2 = null; //住所2
         $BIKO = null; //備考
 
         // 選択画面の場合
-        if($mode == "3")
-        {
+        if($mode == "3") {
             $ID= $_GET['id'];
             // 検索処理のphpファイルを呼び出し
             include('Search.php');
         }
 
-    }else{
+    } else {
+
         session_start(); // セッション開始
         // 画面モードを取得する
         $mode= $_SESSION['mode'];
 
         // 検索ボタン
-        if(isset($_POST['btnReSearch'])){
+        if(isset($_POST['btnReSearch'])) {
 
             $NAME  = $_POST["txtName"]; // 名前
             $SEX  = $_POST["rdoSex"]; // 性別
-            $POSTNO1  = $_POST["txtPostNo1"]; // 郵便番号1
-            $POSTNO2 = $_POST["txtPostNo2"]; // 郵便番号2
+            $POS1  = $_POST["txtPostNo1"]; // 郵便番号1
+            $POS2 = $_POST["txtPostNo2"]; // 郵便番号2
             $ADDRESS1  = $_POST["txtAddress1"]; // 住所１
             $ADDRESS2  = $_POST["txtAddress2"]; // 住所２
             $BIKO  = $_POST["txtBiko"]; // 備考
 
-            // 入力チェック
+            // 郵便番号１と郵便番号２がともに空でない場合
+            if($POS1!=null && $POS2 != null) {
+                // 郵便番号１が３桁の場合
+                if(strlen($POS1)==3) {
+                    //数値かどうか
+                    if (is_numeric($POS1)) {
+                        // 郵便番号２が４桁の場合
+                        if(strlen($POS2)==4) {
+                            //数値かどうか
+                            if (!is_numeric($POS2)) {
+                                $errMsg.= "郵便番号２は数字しか入力できません。";
+                            }
+                        } else {
+                            $errMsg.= "郵便番号２は４文字で入力してください。";
+                        }
+                    } else {
+                        $errMsg.= "郵便番号１は数字しか入力できません。";
+                    }
+                } else {
+                    $errMsg.= "郵便番号１は３文字で入力してください。";
+                }
+             // 郵便番号１と郵便番号２の片方のみ空の場合
+            }else if($POS1!=null || $POS2 != null) {
+                $errMsg.= "郵便番号は片方のみ入力できません。";
+            }
 
             // エラーが０件の場合
-            if($errMsg == null)
-            {
+            if($errMsg == null) {
                 $_SESSION['txtName'] = $_POST["txtName"];// 名前
                 $_SESSION['rdoSex'] = $_POST["rdoSex"]; // 性別
                 $_SESSION['txtPostNo1'] = $_POST["txtPostNo1"]; // 郵便番号1
@@ -60,8 +81,9 @@
             }
 
         // 登録ボタン
-        } else if(isset($_POST['btnInsertUpdate'])){
+        } else if(isset($_POST['btnInsertUpdate'])) {
 
+            $ID  = $_POST["lblId"]; // ID
             $NAME  = $_POST["txtName"]; // 名前
             $SEX  = $_POST["rdoSex"]; // 性別
             $POS1  = $_POST["txtPostNo1"]; // 郵便番号1
@@ -72,42 +94,75 @@
             $ADDRESS2  = $_POST["txtAddress2"]; // 住所２
             $BIKO  = $_POST["txtBiko"]; // 備考
 
-            if($NAME==null)
-            {
+            // 名前は入力必須
+            if($NAME==null) {
                 $errMsg.= "名前が未入力です。";
             }
-            else if($POS1==null)
-            {
-
-                $errMsg.= "郵便番号（前半３桁）が未入力です。";
+            // 郵便番号はともに入力必須
+            else if($POS1 ==null) {
+                $errMsg.= "郵便番号１が未入力です。";
             }
-            else if($POS2==null)
-            {
-
-                $errMsg.= "郵便番号（後半４桁）が未入力です。";
+            else if($POS2 == null) {
+                $errMsg.= "郵便番号２が未入力です。";
             }
-            else if($ADDRESS1==null)
-            {
-
-                $errMsg.= "住所１が未入力です。";
+            // 郵便番号の書式チェック
+            // 郵便番号１
+            else if(!is_numeric($POS1)) {
+                $errMsg.= "郵便番号１は数字しか入力できません。";
             }
-            else if($ADDRESS2==null)
+            // 郵便番号の書式チェック
+            // 郵便番号2
+            else if(!is_numeric($POS2)) {
+                $errMsg.= "郵便番号２は数字しか入力できません。";
+            } 
+            // 名前が1０桁以下かどうか（必須項目）
+            else if(strlen($NAME)>11) {
+                    $errMsg.= "名前は１０文字以内で入力してください。";
+            }
+            // 郵便番号１が3桁かどうか（必須項目）
+            else if(strlen($POS1)!=3) {
+                    $errMsg.= "郵便番号１は３文字で入力してください。";
+            }
+            // 郵便番号２が4桁かどうか（必須項目）
+            else if(strlen($POS2)!=4) {
+                    $errMsg.= "郵便番号２は４文字で入力してください。";
+            }
+            else
             {
+                // 住所1の文字数チェック（任意項目）
+                if($ADDRESS1 != null) {
+                    // 住所1が15桁以下かどうか
+                    if(strlen($ADDRESS1)>16) {
+                        $errMsg.= "住所１は１５文字以内で入力してください。";
+                    }
+                }
 
-                $errMsg.= "住所２が未入力です。";
+                // 住所２の文字数チェック（任意項目）
+                if($ADDRESS2 != null) {
+                    // 住所２が15桁以下かどうか
+                    if(strlen($ADDRESS2)>16){
+                        $errMsg.= "住所２は１５文字以内で入力してください。";
+                    }
+                }
+
+                // 備考の文字数チェック（任意項目）
+                if($BIKO != null) {
+                    // 備考が15桁以下かどうか
+                    if(strlen($BIKO)>16){
+                        $errMsg.= "備考は１５文字以内で入力してください。";
+                    }
+                }
             }
 
             // エラーが０件の場合
-            if($errMsg == null)
-            {
+            if($errMsg == null) {
                 // 検索処理のphpファイルを呼び出し
                 include('Update.php');
             }
         }
 
         // エラーが０件の場合、この画面を終了させる
-        if($errMsg == null)
-        {
+        if($errMsg == null) {
             // 自画面を閉じる
             echo "<script type='text/javascript'>
             window.opener.location.reload();
@@ -138,24 +193,21 @@
                     echo "<tr> ";
                     echo "<td width='100'>会員番号</td>";
                     echo "<td width='280'>"; echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT); echo"</td> ";
-                    echo "<input type='hidden' name='txtId' maxlength='7' size='10' value=$row[ID]>";
+                    echo "<input type='hidden' name='lblId' maxlength='7' size='10' value=$row[ID]>";
                     echo "</tr> ";
                 }
                 ?>
                 <tr> 
                     <td width="100">名前</td>
                     <td width="280">
-                    <?php 
+                    <?php
                         if($mode == "3") {
                             echo "<input type='text' name='txtName' maxlength='20' size='20' value=$row[NAME]>";
-                        }else{
+                        } else {
                             // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null)
-                            {
+                            if($errMsg == null) {
                                 echo "<input type='text' name='txtName' maxlength='20' size='20'>";
-                            }
-                            else
-                            {
+                            } else {
                                 echo "<input type='text' name='txtName' maxlength='20' size='20' value=$NAME>";
                             }
                         }
@@ -167,23 +219,17 @@
                     <td width="280">
                 <?php
                 if($mode == "3") {
-                    if($row['SEX'] == "男"){
+                    if($row['SEX'] == "男") {
                         echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
                         echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                    }
-                    else
-                    {
+                    } else {
                         echo "<input type='radio' name='rdoSex' value='1'>男</input>";
                         echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
                     }
-                }
-                else if($mode=="2")
-                {
+                } else if($mode=="2") {
                     echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
                     echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                }
-                else
-                {
+                } else {
                     echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
                     echo "<input type='radio' name='rdoSex' value='2'>女</input>";
                     echo "<input type='radio' name='rdoSex' value='0'>未指定</input>";
@@ -199,16 +245,13 @@
                             echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=$row[POSTNO1]>";
                             echo "-";
                             echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=$row[POSTNO2]>";
-                        }else{
+                        } else {
                             // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null)
-                            {
+                            if($errMsg == null) {
                                 echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
                                 echo "-";
                                 echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
-                            }
-                            else
-                            {
+                            } else {
                                 echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=$POS1>";
                                 echo "-";
                                 echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=$POS2>";
@@ -223,14 +266,11 @@
                     <?php 
                         if($mode == "3") {
                             echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=$row[ADDRESS1]>";
-                        }else{
+                        } else {
                             // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null)
-                            {
+                            if($errMsg == null) {
                                 echo "<input type='text' name='txtAddress1' maxlength='15' size='25'>";
-                            }
-                            else
-                            {
+                            } else {
                                 echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=$ADDRESS1>";
                             }
                         }
@@ -243,14 +283,11 @@
                     <?php 
                         if($mode == "3") {
                             echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=$row[ADDRESS2]>";
-                        }else{
+                        } else {
                             // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null)
-                            {
+                            if($errMsg == null) {
                                 echo "<input type='text' name='txtAddress2' maxlength='15' size='25'>";
-                            }
-                            else
-                            {
+                            } else {
                                 echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=$ADDRESS2>";
                             }
                         }
@@ -265,12 +302,9 @@
                             echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=$row[BIKO]>";
                         }else{
                             // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null)
-                            {
+                            if($errMsg == null) {
                                 echo "<input type='text' name='txtBiko' maxlength='15' size='25'>";
-                            }
-                            else
-                            {
+                            } else {
                                 echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=$BIKO>";
                             }
                         }

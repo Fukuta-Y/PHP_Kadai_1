@@ -17,13 +17,12 @@
         $result = $stmt->fetchAll();
 
         // データ件数を取得する
-        foreach($result as $row){
+        foreach($result as $row) {
             $getCnt = $row['CNT'];
         }
 
         // 取得結果が0の場合、追加
-        if($getCnt == "0" )
-        {
+        if($getCnt == "0" ) {
             $sql = "SELECT MAX(ID) + 1 AS ID FROM T_USER_INFO";
 
             $stmt = $conn->prepare($sql);
@@ -31,13 +30,12 @@
             $result = $stmt->fetchAll();
 
             // 最大IDを取得する
-            foreach($result as $row){
+            foreach($result as $row) {
                 $ID = $row['ID'];
             }
 
             // 初回時はNULLのため
-            if($ID == null)
-            {
+            if($ID == null) {
                 $ID ='1';
             }
 
@@ -60,73 +58,74 @@
             $sql .= "   ,:BIKO";
             $sql .= ")";
 
+            // INSERTは全項目設定する
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
+            $stmt->bindParam(':NAME', $NAME, PDO::PARAM_STR);
+            $stmt->bindParam(':SEX', $SEX, PDO::PARAM_INT);
+            $stmt->bindParam(':POSTNO', $POSTNO, PDO::PARAM_STR);
+            $stmt->bindParam(':ADDRESS1', $ADDRESS1, PDO::PARAM_STR);
+            $stmt->bindParam(':ADDRESS2', $ADDRESS2, PDO::PARAM_STR);
+            $stmt->bindParam(':BIKO', $BIKO, PDO::PARAM_STR);
+
         } else {
             // 取得結果が1以上の場合、更新
             $sql = " update ";
             $sql .= " T_USER_INFO ";
             $sql .= "   set";
 
-            if($NAME != null)
-            {
+            if($NAME != null) {
                 $sql .= " NAME=:NAME";
             }
     
-            if($SEX != null)
-            {
+            if($SEX != null) {
                 $sql .= " ,SEX=:SEX";
             }
 
-            if($POSTNO != null)
-            {
+            if($POSTNO != null) {
                 $sql .= " ,POSTNO=:POSTNO";
             }
 
-            if($ADDRESS1 != null)
-            {
+            if($ADDRESS1 != null) {
                 $sql .= " ,ADDRESS1=:ADDRESS1";
             }
 
-            if($ADDRESS2 != null)
-            {
+            if($ADDRESS2 != null) {
                 $sql .= " ,ADDRESS2=:ADDRESS2";
             }
-            if($BIKO != null)
-            {
+            if($BIKO != null) {
                 $sql .= " ,BIKO=:BIKO";
             }
 
             $sql .= " WHERE ID =:ID ";
-        }
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
 
-        if($NAME != null)
-        {
-            $stmt->bindParam(':NAME', $NAME, PDO::PARAM_STR);
-        }
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
+    
+            // UPDATEは必要な項目のみ設定する
+            if($NAME != null) {
+                $stmt->bindParam(':NAME', $NAME, PDO::PARAM_STR);
+            }
+    
+            if($SEX != null) {
+                $stmt->bindParam(':SEX', $SEX, PDO::PARAM_INT);
+            }
+    
+            if($POSTNO != null) {
+                $stmt->bindParam(':POSTNO', $POSTNO, PDO::PARAM_STR);
+            }
+    
+            if($ADDRESS1 != null) {
+                $stmt->bindParam(':ADDRESS1', $ADDRESS1, PDO::PARAM_STR);
+            }
+    
+            if($ADDRESS2 != null) {
+                $stmt->bindParam(':ADDRESS2', $ADDRESS2, PDO::PARAM_STR);
+            }
 
-        if($SEX != null)
-        {
-            $stmt->bindParam(':SEX', $SEX, PDO::PARAM_INT);
-        }
-
-        if($POSTNO != null)
-        {
-            $stmt->bindParam(':POSTNO', $POSTNO, PDO::PARAM_STR);
-        }
-
-        if($ADDRESS1 != null)
-        {
-            $stmt->bindParam(':ADDRESS1', $ADDRESS1, PDO::PARAM_STR);
-        }
-
-        if($ADDRESS2 != null)
-        {
-            $stmt->bindParam(':ADDRESS2', $ADDRESS2, PDO::PARAM_STR);
-        }
-        if($BIKO != null)
-        {
-            $stmt->bindParam(':BIKO', $BIKO, PDO::PARAM_STR);
+            if($BIKO != null) {
+                $stmt->bindParam(':BIKO', $BIKO, PDO::PARAM_STR);
+            }
         }
 
         // SQL実行
@@ -137,11 +136,11 @@
 
         // 更新追加件数を取得して表示する
         $updateCount = $stmt->rowCount();
-        if($updateCount >=1){
+        if($updateCount >=1) {
             print "登録・更新 OK";
         }
 
-    }catch (PDOException $e){ 
+    } catch (PDOException $e){ 
         print('Error:'.$e->getMessage());
         // ロールバック
         $conn->rollBack();
