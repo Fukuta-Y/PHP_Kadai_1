@@ -15,14 +15,12 @@
     if(isset($_SESSION['rdoSex'])) {
         $NAME = $_SESSION['txtName'];  //名前
         $SEX = $_SESSION['rdoSex']; //性別
-        $POSTNO = $_SESSION['txtPostNo1']; //郵便番号1
-        $POSTNO = $POSTNO && $_SESSION['txtPostNo2']; //郵便番号2
+        $POSTNO = $_SESSION['txtPostNo']; //郵便番号
         $ADDRESS1 =  $_SESSION['txtAddress1'];  //住所１
         $ADDRESS2 = $_SESSION['txtAddress2']; //住所２
         $BIKO = $_SESSION['txtBiko']; //備考
         session_destroy(); // セッション削除
     }
-    
     // 検索処理のphpファイルを呼び出し
     include('Search.php');
 ?>

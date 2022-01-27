@@ -37,7 +37,9 @@
             $NAME  = $_POST["txtName"]; // 名前
             $SEX  = $_POST["rdoSex"]; // 性別
             $POS1  = $_POST["txtPostNo1"]; // 郵便番号1
-            $POS2 = $_POST["txtPostNo2"]; // 郵便番号2
+            $POS2  = $_POST["txtPostNo2"]; // 郵便番号2
+            $POSTNO = $_POST["txtPostNo1"]; // 郵便番号
+            $POSTNO .= $_POST["txtPostNo2"]; // 郵便番号
             $ADDRESS1  = $_POST["txtAddress1"]; // 住所１
             $ADDRESS2  = $_POST["txtAddress2"]; // 住所２
             $BIKO  = $_POST["txtBiko"]; // 備考
@@ -45,20 +47,20 @@
             // 郵便番号１と郵便番号２がともに空でない場合
             if($POS1!=null && $POS2 != null) {
                 // 郵便番号１が３桁の場合
-                if(strlen($POS1)==3) {
+                if(mb_strlen($POS1)==3) {
                     //数値かどうか
-                    if (is_numeric($POS1)) {
+                    if(preg_match('/^([0-9]{3})$/', $POS1)) {
                         // 郵便番号２が４桁の場合
-                        if(strlen($POS2)==4) {
+                        if(mb_strlen($POS2)==4) {
                             //数値かどうか
-                            if (!is_numeric($POS2)) {
-                                $errMsg.= "郵便番号２は数字しか入力できません。";
+                            if(!preg_match('/^([0-9]{4})$/', $POS2)) {
+                                $errMsg.= "郵便番号２は半角数値しか入力できません。";
                             }
                         } else {
                             $errMsg.= "郵便番号２は４文字で入力してください。";
                         }
                     } else {
-                        $errMsg.= "郵便番号１は数字しか入力できません。";
+                        $errMsg.= "郵便番号１は半角数値しか入力できません。";
                     }
                 } else {
                     $errMsg.= "郵便番号１は３文字で入力してください。";
@@ -72,8 +74,7 @@
             if($errMsg == null) {
                 $_SESSION['txtName'] = $_POST["txtName"];// 名前
                 $_SESSION['rdoSex'] = $_POST["rdoSex"]; // 性別
-                $_SESSION['txtPostNo1'] = $_POST["txtPostNo1"]; // 郵便番号1
-                $_SESSION['txtPostNo2'] = $_POST["txtPostNo2"]; // 郵便番号2
+                $_SESSION['txtPostNo'] = $POSTNO;
                 $_SESSION['txtAddress1'] = $_POST["txtAddress1"];  // 住所1
                 $_SESSION['txtAddress2'] = $_POST["txtAddress2"];  // 住所2
                 $_SESSION['txtBiko'] = $_POST["txtBiko"];  // 備考
@@ -97,15 +98,6 @@
             $ADDRESS2  = $_POST["txtAddress2"]; // 住所２
             $BIKO  = $_POST["txtBiko"]; // 備考
 
-            echo $NAME;
-            echo $SEX;
-            echo $POS1;
-            echo $POS2;
-            echo $POSTNO;
-            echo $ADDRESS1;
-            echo $ADDRESS2;
-            echo $BIKO;
-
             // 名前は入力必須
             if($NAME==null) {
                 $errMsg.= "名前が未入力です。";
@@ -121,30 +113,30 @@
             }
             // 郵便番号の書式チェック
             // 郵便番号１
-            else if(!is_numeric($POS1)) {
-                $errMsg.= "郵便番号１は数字しか入力できません。";
+            else if(!preg_match('/^([0-9]{3})$/', $POS1)) {
+                $errMsg.= "郵便番号１は半角数値しか入力できません。";
             }
             // 郵便番号の書式チェック
             // 郵便番号2
-            else if(!is_numeric($POS2)) {
-                $errMsg.= "郵便番号２は数字しか入力できません。";
+            else if(!preg_match('/^([0-9]{4})$/', $POS2)) {
+                $errMsg.= "郵便番号２は半角数値しか入力できません。";
             } 
             // 名前が1０桁以下かどうか（必須項目）
-            else if(strlen($NAME)>11) {
+            else if(mb_strlen($NAME)>11) {
                     $errMsg.= "名前は１０文字以内で入力してください。";
             }
             // 郵便番号１が3桁かどうか（必須項目）
-            else if(strlen($POS1)!=3) {
+            else if(mb_strlen($POS1)!=3) {
                     $errMsg.= "郵便番号１は３文字で入力してください。";
             }
             // 郵便番号２が4桁かどうか（必須項目）
-            else if(strlen($POS2)!=4) {
+            else if(mb_strlen($POS2)!=4) {
                     $errMsg.= "郵便番号２は４文字で入力してください。";
             } else {
                 // 住所1の文字数チェック（任意項目）
                 if($ADDRESS1 != null) {
                     // 住所1が15桁以下かどうか
-                    if(strlen($ADDRESS1)>16) {
+                    if(mb_strlen($ADDRESS1)>16) {
                         $errMsg.= "住所１は１５文字以内で入力してください。";
                     }
                 }
@@ -152,7 +144,7 @@
                 // 住所２の文字数チェック（任意項目）
                 if($ADDRESS2 != null) {
                     // 住所２が15桁以下かどうか
-                    if(strlen($ADDRESS2)>16){
+                    if(mb_strlen($ADDRESS2)>16){
                         $errMsg.= "住所２は１５文字以内で入力してください。";
                     }
                 }
@@ -160,7 +152,7 @@
                 // 備考の文字数チェック（任意項目）
                 if($BIKO != null) {
                     // 備考が15桁以下かどうか
-                    if(strlen($BIKO)>16){
+                    if(mb_strlen($BIKO)>16){
                         $errMsg.= "備考は１５文字以内で入力してください。";
                     }
                 }

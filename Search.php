@@ -32,7 +32,7 @@
             $sql .= "%'";
         }
 
-        if($SEX != '0') {
+        if($SEX != "0") {
             $sql .= " AND SEX ='";
             $sql .= $SEX;
             $sql .= "'";
