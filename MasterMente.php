@@ -136,7 +136,7 @@
                 // 住所1の文字数チェック（任意項目）
                 if($ADDRESS1 != null) {
                     // 住所1が15桁以下かどうか
-                    if(mb_strlen($ADDRESS1)>16) {
+                    if(mb_strlen($ADDRESS1)>15) {
                         $errMsg.= "住所１は１５文字以内で入力してください。";
                     }
                 }
@@ -144,7 +144,7 @@
                 // 住所２の文字数チェック（任意項目）
                 if($ADDRESS2 != null) {
                     // 住所２が15桁以下かどうか
-                    if(mb_strlen($ADDRESS2)>16){
+                    if(mb_strlen($ADDRESS2)>15){
                         $errMsg.= "住所２は１５文字以内で入力してください。";
                     }
                 }
@@ -152,7 +152,7 @@
                 // 備考の文字数チェック（任意項目）
                 if($BIKO != null) {
                     // 備考が15桁以下かどうか
-                    if(mb_strlen($BIKO)>16){
+                    if(mb_strlen($BIKO)>15){
                         $errMsg.= "備考は１５文字以内で入力してください。";
                     }
                 }
@@ -207,12 +207,12 @@
                     <?php
                         // エラーチェックの内容がある場合は前回の内容を設定する
                         if($NAME != null || $errMsg != null) {
-                            echo "<input type='text' name='txtName' maxlength='20' size='20' value=$NAME>";
+                            echo "<input type='text' name='txtName' maxlength='10' size='20' value=$NAME>";
                         } else {
                             if($mode == "3") {
-                                echo "<input type='text' name='txtName' maxlength='20' size='20' value=$row[NAME]>";
+                                echo "<input type='text' name='txtName' maxlength='10' size='20' value=$row[NAME]>";
                             } else {
-                                echo "<input type='text' name='txtName' maxlength='20' size='20'>";
+                                echo "<input type='text' name='txtName' maxlength='10' size='20'>";
                             }
                         }
                     ?>
