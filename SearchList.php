@@ -36,7 +36,6 @@
     function selectRow(key) {
         // 更新画面を呼び出す
         window.open("MasterMente.php?mode=3&id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
-
     }
     // 削除ボタン
     function deleteRow(key) {

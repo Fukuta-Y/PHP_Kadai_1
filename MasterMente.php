@@ -80,10 +80,15 @@
                 $_SESSION['txtBiko'] = $_POST["txtBiko"];  // 備考
             }
 
-        // 登録ボタン
-        } else if(isset($_POST['btnInsertUpdate'])) {
+        // 登録ボタン（登録モード・更新モード）
+        } else if(isset($_POST['btnInsert'])|| isset($_POST['btnUpdate'])) {
 
-            $ID  = $_POST["lblId"]; // ID
+            // 更新モードの場合のみ
+            if(isset($_POST['btnUpdate']))
+            {
+                $ID  = $_POST["lblId"]; // ID
+            }
+
             $NAME  = $_POST["txtName"]; // 名前
             $SEX  = $_POST["rdoSex"]; // 性別
             $POS1  = $_POST["txtPostNo1"]; // 郵便番号1
@@ -101,9 +106,11 @@
             // 郵便番号はともに入力必須
             else if($POS1 ==null) {
                 $errMsg.= "郵便番号１が未入力です。";
+                $POS1  = $_POST["txtPostNo1"]; // 郵便番号1を再設定
             }
             else if($POS2 == null) {
                 $errMsg.= "郵便番号２が未入力です。";
+                $POS1  = $_POST["txtPostNo1"]; // 郵便番号２を再設定
             }
             // 郵便番号の書式チェック
             // 郵便番号１
@@ -192,8 +199,8 @@
                 if($mode == "3") {
                     echo "<tr> ";
                     echo "<td width='100'>会員番号</td>";
-                    echo "<td width='280'>"; echo str_pad($row['ID'], 6, 0, STR_PAD_LEFT); echo"</td> ";
-                    echo "<input type='hidden' name='lblId' maxlength='7' size='10' value=$row[ID]>";
+                    echo "<td width='280'>"; echo str_pad($ID, 6, 0, STR_PAD_LEFT); echo"</td> ";
+                    echo "<input type='hidden' name='lblId' maxlength='7' size='10' value=$ID>";
                     echo "</tr> ";
                 }
                 ?>
@@ -201,14 +208,14 @@
                     <td width="100">名前</td>
                     <td width="280">
                     <?php
-                        if($mode == "3") {
-                            echo "<input type='text' name='txtName' maxlength='20' size='20' value=$row[NAME]>";
+                        // エラーチェックの内容がある場合は前回の内容を設定する
+                        if($NAME != null || $errMsg != null) {
+                            echo "<input type='text' name='txtName' maxlength='20' size='20' value=$NAME>";
                         } else {
-                            // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null) {
-                                echo "<input type='text' name='txtName' maxlength='20' size='20'>";
+                            if($mode == "3") {
+                                echo "<input type='text' name='txtName' maxlength='20' size='20' value=$row[NAME]>";
                             } else {
-                                echo "<input type='text' name='txtName' maxlength='20' size='20' value=$NAME>";
+                                echo "<input type='text' name='txtName' maxlength='20' size='20'>";
                             }
                         }
                     ?>
@@ -218,21 +225,50 @@
                     <td width="100">性別</td>
                     <td width="280">
                 <?php
-                if($mode == "3") {
-                    if($row['SEX'] == "男") {
+                // 初期表示の場合
+                if($errMsg == null) {
+                    // 登録モードの初期表示の場合
+                    if($mode == "2") {
                         echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
                         echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                    } else {
+                    }
+                    // 更新モードの初期表示の場合
+                    else if($mode == "3") {
+                        if($row['SEX'] == "男") {
+                            echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
+                            echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                        } else {
+                            echo "<input type='radio' name='rdoSex' value='1'>男</input>";
+                            echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
+                        }
+                    // 検索モードの初期表示の場合
+                    } else if($mode == "1") {
+                        echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
+                        echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                        echo "<input type='radio' name='rdoSex' value='0'  checked='checked'>未指定</input>";
+                    }
+                // 入力チェックで再表示の場合
+                } else {
+                    // 未指定の場合
+                    if ($SEX== "0") {
                         echo "<input type='radio' name='rdoSex' value='1'>男</input>";
                         echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
+                        echo "<input type='radio' name='rdoSex' value='0'  checked='checked'>未指定</input>";
                     }
-                } else if($mode=="2") {
-                    echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
-                    echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                } else {
-                    echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
-                    echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                    echo "<input type='radio' name='rdoSex' value='0'>未指定</input>";
+                    else
+                    {
+                        if($SEX == "1") {
+                            echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
+                            echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                        } else if ($SEX== "2") {
+                            echo "<input type='radio' name='rdoSex' value='1'>男</input>";
+                            echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
+                        }
+                        // 検索モードの時は未指定を表示させる
+                        if($mode == "1") {
+                            echo "<input type='radio' name='rdoSex' value='0'>未指定</input>";
+                        }
+                    }
                 }
                 ?>
                 </td> 
@@ -240,23 +276,33 @@
                 <tr> 
                     <td width="100">郵便番号</td>
                     <td width="280">
-                    <?php 
+                    <?php
+                    // 完全な初期表示の場合
+                    if($POS1 == null && $POS2 == null && $errMsg == null) {
                         if($mode == "3") {
                             echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=$row[POSTNO1]>";
                             echo "-";
                             echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=$row[POSTNO2]>";
                         } else {
-                            // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null) {
-                                echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
-                                echo "-";
-                                echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
-                            } else {
-                                echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=$POS1>";
-                                echo "-";
-                                echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=$POS2>";
-                            }
+                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
+                            echo "-";
+                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
                         }
+                    // 入力チェックで再表示の場合
+                    } else {
+                        // 中身の設定がされている場合は設定する
+                        if($POS1 != null) {
+                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=$POS1>";
+                        } else {
+                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
+                        }
+                        echo "-";
+                        if($POS2 != null) {
+                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=$POS2>";
+                        } else {
+                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
+                        }
+                    }
                     ?>
                     </td> 
                 </tr> 
@@ -264,14 +310,14 @@
                     <td width="100">住所１</td>
                     <td width="280">
                     <?php 
-                        if($mode == "3") {
-                            echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=$row[ADDRESS1]>";
+                        // 入力チェックで再表示の場合
+                        if($ADDRESS1 != null || $errMsg != null) {
+                            echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=$ADDRESS1>";
                         } else {
-                            // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null) {
-                                echo "<input type='text' name='txtAddress1' maxlength='15' size='25'>";
+                            if($mode == "3") {
+                                echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=$row[ADDRESS1]>";
                             } else {
-                                echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=$ADDRESS1>";
+                                echo "<input type='text' name='txtAddress1' maxlength='15' size='25'>";
                             }
                         }
                     ?>
@@ -281,14 +327,14 @@
                     <td width="100">住所２</td>
                     <td width="280">
                     <?php 
-                        if($mode == "3") {
-                            echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=$row[ADDRESS2]>";
+                        // 入力チェックで再表示の場合
+                        if($ADDRESS2 != null || $errMsg != null) {
+                            echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=$ADDRESS2>";
                         } else {
-                            // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null) {
-                                echo "<input type='text' name='txtAddress2' maxlength='15' size='25'>";
+                            if($mode == "3") {
+                                echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=$row[ADDRESS2]>";
                             } else {
-                                echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=$ADDRESS2>";
+                                echo "<input type='text' name='txtAddress2' maxlength='15' size='25'>";
                             }
                         }
                     ?>
@@ -297,13 +343,13 @@
                 <tr> 
                     <td width="100">備考</td>
                     <td width="280">
-                    <?php 
-                        if($mode == "3") {
-                            echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=$row[BIKO]>";
-                        }else{
-                            // エラーチェックの内容がある場合は前回の内容を設定する
-                            if($errMsg == null) {
-                                echo "<input type='text' name='txtBiko' maxlength='15' size='25'>";
+                    <?php
+                        // 入力チェックで再表示の場合
+                        if($BIKO != null || $errMsg != null) {
+                            echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=$BIKO>";
+                        } else {
+                            if($mode == "3") {
+                                echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=$row[BIKO]>";
                             } else {
                                 echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=$BIKO>";
                             }
@@ -320,9 +366,9 @@
                         if($mode == "1") {
                             echo "<button type='submit' style='width:100px;' name='btnReSearch'>検索</button>";
                         } else if($mode == "2") {
-                            echo "<button type='submit' style='width:100px;' name='btnInsertUpdate'>新規登録</button>";
+                            echo "<button type='submit' style='width:100px;' name='btnInsert'>新規登録</button>";
                         } else {
-                            echo "<button type='submit' style='width:100px;' name='btnInsertUpdate'>更新</button>";
+                            echo "<button type='submit' style='width:100px;' name='btnUpdate'>更新</button>";
                         }
                     ?>
                     </center>
