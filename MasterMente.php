@@ -27,7 +27,6 @@
         }
 
     } else {
-
         session_start(); // セッション開始
         // 画面モードを取得する
         $mode= $_SESSION['mode'];
@@ -65,7 +64,7 @@
                     $errMsg.= "郵便番号１は３文字で入力してください。";
                 }
              // 郵便番号１と郵便番号２の片方のみ空の場合
-            }else if($POS1!=null || $POS2 != null) {
+            } else if($POS1!=null || $POS2 != null) {
                 $errMsg.= "郵便番号は片方のみ入力できません。";
             }
 
@@ -84,8 +83,7 @@
         } else if(isset($_POST['btnInsert'])|| isset($_POST['btnUpdate'])) {
 
             // 更新モードの場合のみ
-            if(isset($_POST['btnUpdate']))
-            {
+            if(isset($_POST['btnUpdate'])) {
                 $ID  = $_POST["lblId"]; // ID
             }
 
@@ -98,6 +96,15 @@
             $ADDRESS1  = $_POST["txtAddress1"]; // 住所１
             $ADDRESS2  = $_POST["txtAddress2"]; // 住所２
             $BIKO  = $_POST["txtBiko"]; // 備考
+
+            echo $NAME;
+            echo $SEX;
+            echo $POS1;
+            echo $POS2;
+            echo $POSTNO;
+            echo $ADDRESS1;
+            echo $ADDRESS2;
+            echo $BIKO;
 
             // 名前は入力必須
             if($NAME==null) {
@@ -133,9 +140,7 @@
             // 郵便番号２が4桁かどうか（必須項目）
             else if(strlen($POS2)!=4) {
                     $errMsg.= "郵便番号２は４文字で入力してください。";
-            }
-            else
-            {
+            } else {
                 // 住所1の文字数チェック（任意項目）
                 if($ADDRESS1 != null) {
                     // 住所1が15桁以下かどうか
