@@ -34,15 +34,15 @@
         // 検索ボタン
         if(isset($_POST['btnReSearch'])) {
 
-            $NAME  = $_POST["txtName"]; // 名前
-            $SEX  = $_POST["rdoSex"]; // 性別
-            $POS1  = $_POST["txtPostNo1"]; // 郵便番号1
-            $POS2  = $_POST["txtPostNo2"]; // 郵便番号2
-            $POSTNO = $_POST["txtPostNo1"]; // 郵便番号
-            $POSTNO .= $_POST["txtPostNo2"]; // 郵便番号
-            $ADDRESS1  = $_POST["txtAddress1"]; // 住所１
-            $ADDRESS2  = $_POST["txtAddress2"]; // 住所２
-            $BIKO  = $_POST["txtBiko"]; // 備考
+            $NAME  = trim($_POST["txtName"]); // 名前
+            $SEX  = trim($_POST["rdoSex"]); // 性別
+            $POS1  = trim($_POST["txtPostNo1"]); // 郵便番号1
+            $POS2  = trim($_POST["txtPostNo2"]); // 郵便番号2
+            $POSTNO = trim($_POST["txtPostNo1"]); // 郵便番号
+            $POSTNO .= trim($_POST["txtPostNo2"]); // 郵便番号
+            $ADDRESS1  = trim($_POST["txtAddress1"]); // 住所１
+            $ADDRESS2  = trim($_POST["txtAddress2"]); // 住所２
+            $BIKO  = trim($_POST["txtBiko"]); // 備考
 
             // 郵便番号１と郵便番号２がともに空でない場合
             if($POS1!=null && $POS2 != null) {
@@ -72,12 +72,12 @@
 
             // エラーが０件の場合
             if($errMsg == null) {
-                $_SESSION['txtName'] = $_POST["txtName"];// 名前
-                $_SESSION['rdoSex'] = $_POST["rdoSex"]; // 性別
+                $_SESSION['txtName'] = $NAME;// 名前
+                $_SESSION['rdoSex'] = $SEX; // 性別
                 $_SESSION['txtPostNo'] = $POSTNO;
-                $_SESSION['txtAddress1'] = $_POST["txtAddress1"];  // 住所1
-                $_SESSION['txtAddress2'] = $_POST["txtAddress2"];  // 住所2
-                $_SESSION['txtBiko'] = $_POST["txtBiko"];  // 備考
+                $_SESSION['txtAddress1'] = $ADDRESS1;  // 住所1
+                $_SESSION['txtAddress2'] = $ADDRESS2;  // 住所2
+                $_SESSION['txtBiko'] = $BIKO;  // 備考
             }
 
         // 登録ボタン（登録モード・更新モード）
@@ -88,15 +88,15 @@
                 $ID  = $_POST["lblId"]; // ID
             }
 
-            $NAME  = $_POST["txtName"]; // 名前
-            $SEX  = $_POST["rdoSex"]; // 性別
-            $POS1  = $_POST["txtPostNo1"]; // 郵便番号1
-            $POS2 = $_POST["txtPostNo2"]; // 郵便番号2
-            $POSTNO = $_POST["txtPostNo1"]; // 郵便番号
-            $POSTNO .= $_POST["txtPostNo2"]; // 郵便番号
-            $ADDRESS1  = $_POST["txtAddress1"]; // 住所１
-            $ADDRESS2  = $_POST["txtAddress2"]; // 住所２
-            $BIKO  = $_POST["txtBiko"]; // 備考
+            $NAME  = trim($_POST["txtName"]); // 名前
+            $SEX  = trim($_POST["rdoSex"]); // 性別
+            $POS1  = trim($_POST["txtPostNo1"]); // 郵便番号1
+            $POS2  = trim($_POST["txtPostNo2"]); // 郵便番号2
+            $POSTNO = trim($_POST["txtPostNo1"]); // 郵便番号
+            $POSTNO .= trim($_POST["txtPostNo2"]); // 郵便番号
+            $ADDRESS1  = trim($_POST["txtAddress1"]); // 住所１
+            $ADDRESS2  = trim($_POST["txtAddress2"]); // 住所２
+            $BIKO  = trim($_POST["txtBiko"]); // 備考
 
             // 名前は入力必須
             if($NAME==null) {
