@@ -4,9 +4,6 @@
         $conn = new PDO('mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8', 'root', '',
         array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
-        // トランザクションを開始する
-        $conn->beginTransaction();
-        
         $sql = "select";
         $sql .= "    ID";
         $sql .= "   ,NAME";
@@ -71,8 +68,7 @@
             $dbCnt++;
         }
 
-        // コミット
-        $conn->commit();
+        $_SESSION['dbCnt'] = $dbCnt; //取得数を保持
 
     } catch (PDOException $e){ 
         print('Error:'.$e->getMessage());
