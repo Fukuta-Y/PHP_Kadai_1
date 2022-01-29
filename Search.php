@@ -17,49 +17,71 @@
         $sql .= "  T_USER_INFO";
         $sql .= "  WHERE 1=1 ";
 
+        // 検索条件の設定
         if($ID != null) {
-            $sql .= " AND ID = '";
-            $sql .= $ID;
-            $sql .= "'";
+            $sql .= " AND ID = :ID";
         }
 
         if($NAME != null) {
-            $sql .= " AND NAME LIKE '%";
-            $sql .= $NAME;
-            $sql .= "%'";
+            $sql .= " AND NAME LIKE :NAME";
         }
 
         if($SEX != "0") {
-            $sql .= " AND SEX ='";
-            $sql .= $SEX;
-            $sql .= "'";
+            $sql .= " AND SEX = :SEX";
         }
 
         if($POSTNO != null) {
-            $sql .= " AND POSTNO ='";
-            $sql .= $POSTNO;
-            $sql .= "'";
+            $sql .= " AND POSTNO =:POSTNO";
         }
 
         if($ADDRESS1 != null) {
-            $sql .= " AND ADDRESS1 LIKE '%";
-            $sql .= $ADDRESS1;
-            $sql .= "%'";
+            $sql .= " AND ADDRESS1 LIKE :ADDRESS1";
         }
 
         if($ADDRESS2 != null) {
-            $sql .= " AND ADDRESS2 LIKE '%";
-            $sql .= $ADDRESS2;
-            $sql .= "%'";
+            $sql .= " AND ADDRESS2 LIKE :ADDRESS2";    
         }
 
         if($BIKO != null) {
-            $sql .= " AND BIKO LIKE '%";
-            $sql .= $BIKO;
-            $sql .= "%'";
+            $sql .= " AND BIKO LIKE :BIKO";
         }
 
+        // SQLの設定
         $stmt = $conn->prepare($sql);
+
+        // バインド設定
+        if($ID != null) {
+            $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
+        }
+
+        if($NAME != null) {
+            $NAME = '%'.$NAME.'%';
+            $stmt->bindParam(':NAME',$NAME, PDO::PARAM_STR);
+        }
+
+        if($SEX != "0") {
+            $stmt->bindParam(':SEX', $SEX, PDO::PARAM_INT);
+        }
+
+        if($POSTNO != null) {
+            $stmt->bindParam(':POSTNO', $POSTNO, PDO::PARAM_STR);
+        }
+
+        if($ADDRESS1 != null) {
+            $ADDRESS1 = '%'.$ADDRESS1.'%';
+            $stmt->bindParam(':ADDRESS1', $ADDRESS1, PDO::PARAM_STR);
+        }
+
+        if($ADDRESS2 != null) {
+            $ADDRESS2 = '%'.$ADDRESS2.'%';
+            $stmt->bindParam(':ADDRESS2', $ADDRESS2, PDO::PARAM_STR);
+        }
+
+        if($BIKO != null) {
+            $BIKO = '%'.$BIKO.'%';
+            $stmt->bindParam(':BIKO', $BIKO, PDO::PARAM_STR);
+        }
+
         $stmt->execute();
         $result = $stmt->fetchAll();
 

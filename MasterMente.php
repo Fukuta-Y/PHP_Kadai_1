@@ -44,6 +44,17 @@
             $ADDRESS2  = trim($_POST["txtAddress2"]); // 住所２
             $BIKO  = trim($_POST["txtBiko"]); // 備考
 
+
+            // $ErrChk = new ErrCheck();
+
+            // $MsgList = new MsgList();
+
+            // if($ErrChk->nullCheck($POS1))
+            // {
+            //     echo $ErrChk;
+            //     echo $MsgList->get_msgList;
+            // }
+
             // 郵便番号１と郵便番号２がともに空でない場合
             if($POS1!=null && $POS2 != null) {
                 // 郵便番号１が３桁の場合
