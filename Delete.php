@@ -1,7 +1,12 @@
 <?php
+    require_once('ConnectInfo.php');
+
+    // インスタンス生成
+    $ConnectInfo = new ConnectInfo();
+
     try{
         // DBコネクションを取得する
-        $conn = new PDO('mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8', 'root', '',
+        $conn = new PDO($ConnectInfo->getCon(), $ConnectInfo->getUser(), '', 
                 array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
         // トランザクションを開始する
@@ -26,6 +31,8 @@
 
     } catch (PDOException $e) { 
         print('Error:'.$e->getMessage());
+        // ロールバック
+        $conn->rollBack();
         die();
     }
 ?>
