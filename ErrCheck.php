@@ -10,7 +10,7 @@ class ErrCheck{
     }
     // 引数で渡されたtxtが数値かどうか
     public function numCheck($txt,$len){
-        if(preg_match('/^([0-9]{' + $len +'})$/', $txt)) {
+        if(preg_match('/^([0-9]{'.$len.'})$/', $txt)) {
             return true;
         } else {
             return false;

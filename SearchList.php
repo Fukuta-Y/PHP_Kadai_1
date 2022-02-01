@@ -1,6 +1,11 @@
 <?php
+    require_once('MsgList.php');
+
     $dbCnt = 0;
     $errMsg=null;
+
+    // インスタンス生成
+    $MsgList = new MsgList();
 
     $ID = null; //ID
     $NAME = null; //名前
@@ -29,9 +34,9 @@
 
     // 初期表示時でセッションが開始、存在している場合（セッションの性別が存在しないのは初回だけのため)
     if(isset($_SESSION['rdoSex']) && $dbCnt == '0') {
-        $errMsg= "検索条件に一致するデータがありませんでした。";
-    } else if(!isset($_SESSION['rdoSex'])&& $dbCnt == '0') {
-        $errMsg= "会員情報が登録されていません。";
+        $errMsg= $MsgList->getMsg('010');
+    } else if(!isset($_SESSION['rdoSex']) && $dbCnt == '0') {
+        $errMsg= $MsgList->getMsg('011');
     } else {
         $errMsg=null;
     }

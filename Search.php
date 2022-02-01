@@ -1,8 +1,16 @@
 <?php
+    require_once('ErrCheck.php');
+    require_once('ConnectInfo.php');
+
     $dbCnt = 0;
-    try{
-        $conn = new PDO('mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8', 'root', '',
-        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+    // インスタンス生成
+    $ErrChk = new ErrCheck();
+    $ConnectInfo = new ConnectInfo();
+
+    try {
+
+        $conn = new PDO($ConnectInfo->getCon(), $ConnectInfo->getUser(), '', 
+                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 
         $sql = "select";
         $sql .= "    ID";
@@ -18,11 +26,11 @@
         $sql .= "  WHERE 1=1 ";
 
         // 検索条件の設定
-        if($ID != null) {
+        if($ErrChk->nullCheck($ID)) {
             $sql .= " AND ID = :ID";
         }
 
-        if($NAME != null) {
+        if($ErrChk->nullCheck($NAME)) {
             $sql .= " AND NAME LIKE :NAME";
         }
 
@@ -30,19 +38,19 @@
             $sql .= " AND SEX = :SEX";
         }
 
-        if($POSTNO != null) {
+        if($ErrChk->nullCheck($POSTNO)) {
             $sql .= " AND POSTNO =:POSTNO";
         }
 
-        if($ADDRESS1 != null) {
+        if($ErrChk->nullCheck($ADDRESS1)) {
             $sql .= " AND ADDRESS1 LIKE :ADDRESS1";
         }
 
-        if($ADDRESS2 != null) {
+        if($ErrChk->nullCheck($ADDRESS2)) {
             $sql .= " AND ADDRESS2 LIKE :ADDRESS2";    
         }
 
-        if($BIKO != null) {
+        if($ErrChk->nullCheck($BIKO)) {
             $sql .= " AND BIKO LIKE :BIKO";
         }
 
@@ -50,11 +58,11 @@
         $stmt = $conn->prepare($sql);
 
         // バインド設定
-        if($ID != null) {
+        if($ErrChk->nullCheck($ID)) {
             $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
         }
 
-        if($NAME != null) {
+        if($ErrChk->nullCheck($NAME)) {
             $NAME = '%'.$NAME.'%';
             $stmt->bindParam(':NAME',$NAME, PDO::PARAM_STR);
         }
@@ -63,21 +71,21 @@
             $stmt->bindParam(':SEX', $SEX, PDO::PARAM_INT);
         }
 
-        if($POSTNO != null) {
+        if($ErrChk->nullCheck($POSTNO)) {
             $stmt->bindParam(':POSTNO', $POSTNO, PDO::PARAM_STR);
         }
 
-        if($ADDRESS1 != null) {
+        if($ErrChk->nullCheck($ADDRESS1)) {
             $ADDRESS1 = '%'.$ADDRESS1.'%';
             $stmt->bindParam(':ADDRESS1', $ADDRESS1, PDO::PARAM_STR);
         }
 
-        if($ADDRESS2 != null) {
+        if($ErrChk->nullCheck($ADDRESS2)) {
             $ADDRESS2 = '%'.$ADDRESS2.'%';
             $stmt->bindParam(':ADDRESS2', $ADDRESS2, PDO::PARAM_STR);
         }
 
-        if($BIKO != null) {
+        if($ErrChk->nullCheck($BIKO)) {
             $BIKO = '%'.$BIKO.'%';
             $stmt->bindParam(':BIKO', $BIKO, PDO::PARAM_STR);
         }
