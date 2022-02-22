@@ -1,12 +1,17 @@
 <?php
-    $dbCnt = 0;
-    try{
-        $conn = new PDO('mysql:host=127.0.0.1;port=3306;dbname=aspKadaiDB;charset=utf8', 'root', '',
-        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+    require_once('ErrCheck.php');
+    require_once('ConnectInfo.php');
 
-        // トランザクションを開始する
-        $conn->beginTransaction();
-        
+    $dbCnt = 0;
+    // インスタンス生成
+    $ErrChk = new ErrCheck();
+    $ConnectInfo = new ConnectInfo();
+
+    try {
+
+        $conn = new PDO($ConnectInfo->getCon(), $ConnectInfo->getUser(), '', 
+                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+
         $sql = "select";
         $sql .= "    ID";
         $sql .= "   ,NAME";
@@ -20,49 +25,71 @@
         $sql .= "  T_USER_INFO";
         $sql .= "  WHERE 1=1 ";
 
-        if($ID != null) {
-            $sql .= " AND ID = '";
-            $sql .= $ID;
-            $sql .= "'";
+        // 検索条件の設定
+        if($ErrChk->nullCheck($ID)) {
+            $sql .= " AND ID = :ID";
         }
 
-        if($NAME != null) {
-            $sql .= " AND NAME LIKE '%";
-            $sql .= $NAME;
-            $sql .= "%'";
+        if($ErrChk->nullCheck($NAME)) {
+            $sql .= " AND NAME LIKE :NAME";
         }
 
         if($SEX != "0") {
-            $sql .= " AND SEX ='";
-            $sql .= $SEX;
-            $sql .= "'";
+            $sql .= " AND SEX = :SEX";
         }
 
-        if($POSTNO != null) {
-            $sql .= " AND POSTNO ='";
-            $sql .= $POSTNO;
-            $sql .= "'";
+        if($ErrChk->nullCheck($POSTNO)) {
+            $sql .= " AND POSTNO =:POSTNO";
         }
 
-        if($ADDRESS1 != null) {
-            $sql .= " AND ADDRESS1 LIKE '%";
-            $sql .= $ADDRESS1;
-            $sql .= "%'";
+        if($ErrChk->nullCheck($ADDRESS1)) {
+            $sql .= " AND ADDRESS1 LIKE :ADDRESS1";
         }
 
-        if($ADDRESS2 != null) {
-            $sql .= " AND ADDRESS2 LIKE '%";
-            $sql .= $ADDRESS2;
-            $sql .= "%'";
+        if($ErrChk->nullCheck($ADDRESS2)) {
+            $sql .= " AND ADDRESS2 LIKE :ADDRESS2";    
         }
 
-        if($BIKO != null) {
-            $sql .= " AND BIKO LIKE '%";
-            $sql .= $BIKO;
-            $sql .= "%'";
+        if($ErrChk->nullCheck($BIKO)) {
+            $sql .= " AND BIKO LIKE :BIKO";
         }
 
+        // SQLの設定
         $stmt = $conn->prepare($sql);
+
+        // バインド設定
+        if($ErrChk->nullCheck($ID)) {
+            $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
+        }
+
+        if($ErrChk->nullCheck($NAME)) {
+            $NAME = '%'.$NAME.'%';
+            $stmt->bindParam(':NAME',$NAME, PDO::PARAM_STR);
+        }
+
+        if($SEX != "0") {
+            $stmt->bindParam(':SEX', $SEX, PDO::PARAM_INT);
+        }
+
+        if($ErrChk->nullCheck($POSTNO)) {
+            $stmt->bindParam(':POSTNO', $POSTNO, PDO::PARAM_STR);
+        }
+
+        if($ErrChk->nullCheck($ADDRESS1)) {
+            $ADDRESS1 = '%'.$ADDRESS1.'%';
+            $stmt->bindParam(':ADDRESS1', $ADDRESS1, PDO::PARAM_STR);
+        }
+
+        if($ErrChk->nullCheck($ADDRESS2)) {
+            $ADDRESS2 = '%'.$ADDRESS2.'%';
+            $stmt->bindParam(':ADDRESS2', $ADDRESS2, PDO::PARAM_STR);
+        }
+
+        if($ErrChk->nullCheck($BIKO)) {
+            $BIKO = '%'.$BIKO.'%';
+            $stmt->bindParam(':BIKO', $BIKO, PDO::PARAM_STR);
+        }
+
         $stmt->execute();
         $result = $stmt->fetchAll();
 
@@ -71,8 +98,7 @@
             $dbCnt++;
         }
 
-        // コミット
-        $conn->commit();
+        $_SESSION['dbCnt'] = $dbCnt; //取得数を保持
 
     } catch (PDOException $e){ 
         print('Error:'.$e->getMessage());

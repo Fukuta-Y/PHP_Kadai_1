@@ -1,5 +1,11 @@
 <?php
+    require_once('MsgList.php');
+
     $dbCnt = 0;
+    $errMsg=null;
+
+    // インスタンス生成
+    $MsgList = new MsgList();
 
     $ID = null; //ID
     $NAME = null; //名前
@@ -8,7 +14,6 @@
     $ADDRESS1 = null; //住所１
     $ADDRESS2 = null; //住所２
     $BIKO = null; //備考
-
     session_start(); // セッション開始
 
     // 初期表示時でセッションが開始、存在している場合（セッションの性別が存在しないのは初回だけのため）
@@ -23,6 +28,18 @@
     }
     // 検索処理のphpファイルを呼び出し
     include('Search.php');
+
+    //結果取得件数を取得
+    $dbCnt = $_SESSION['dbCnt'];
+
+    // 初期表示時でセッションが開始、存在している場合（セッションの性別が存在しないのは初回だけのため)
+    if(isset($_SESSION['rdoSex']) && $dbCnt == '0') {
+        $errMsg= $MsgList->getMsg('010');
+    } else if(!isset($_SESSION['rdoSex']) && $dbCnt == '0') {
+        $errMsg= $MsgList->getMsg('011');
+    } else {
+        $errMsg=null;
+    }
 ?>
 <script type="text/javascript">
 
@@ -66,6 +83,13 @@
 </head>
 <body>
 <form name="form1">
+    <table style="width:500px;height:10px;">
+        <tr> 
+            <td>
+                <label style="width:100px;color:red;" id="errLabel"><?php echo $errMsg;?></label>
+            </td>
+        </tr> 
+    </table>
     </br>
     <a href="" onclick="searchRow(); return false;">検索条件</a>
     &nbsp;&nbsp;&nbsp;&nbsp;
@@ -80,7 +104,7 @@
         <td width="100"></td>
         <td width="100"></td>
         <td width="100"></td>
-        <td width="100">表示件数：</td>
+        <td width="100">表示件数:</td>
         <td width="100">&nbsp;&nbsp;&nbsp;&nbsp;<lable id="lblCount"><?php echo $dbCnt; ?>件</lable></td>
     </tr> 
     </table>
@@ -97,9 +121,7 @@
         <td width="100" style="background-color: greenyellow;">備考</td> 
     </tr> 
 <?php
-    $rdoCnt = 0;
     foreach($result as $row) {
-        $rdoCnt++;
 ?>
         <tr class='chara'>
         <?php
