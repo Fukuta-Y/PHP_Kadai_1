@@ -4,7 +4,7 @@
     // インスタンス生成
     $ConnectInfo = new ConnectInfo();
 
-    try{
+    try {
         // DBコネクションを取得する
         $conn = new PDO($ConnectInfo->getCon(), $ConnectInfo->getUser(), '', 
                 array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));

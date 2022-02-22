@@ -104,7 +104,7 @@
         <td width="100"></td>
         <td width="100"></td>
         <td width="100"></td>
-        <td width="100">表示件数：</td>
+        <td width="100">表示件数:</td>
         <td width="100">&nbsp;&nbsp;&nbsp;&nbsp;<lable id="lblCount"><?php echo $dbCnt; ?>件</lable></td>
     </tr> 
     </table>
