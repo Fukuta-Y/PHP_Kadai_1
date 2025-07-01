@@ -52,13 +52,11 @@
     // 削除ボタン
     function deleteRow(key) {
         // 確認
-        if (!confirm("<?php echo htmlspecialchars($MsgList->getMsg('003')); ?>")) return; // メッセージもエスケープ
+        if (!confirm("<?php echo htmlspecialchars($MsgList->getMsg('003')); ?>")) return;
 
-        // 削除画面を呼び出す
-        window.open("Delete.php?id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
-
-        // 自画面を、リロードする (親ウィンドウのリロード)
-        window.opener.location.reload();
+        // 削除画面を呼び出す（開く小窓に変数を渡す）
+        // 削除成功時に小窓が親ウィンドウをリロードするようにするため、open() の戻り値を保存する必要はありません。
+        window.open("Delete.php?id=" + key, 'deleteWindow', "width=500,height=400,left=" + w + ",top=" + h);
     }
     // 検索条件リンク
     function searchRow() {

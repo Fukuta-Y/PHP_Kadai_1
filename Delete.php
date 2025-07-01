@@ -20,27 +20,53 @@
         // テーブル名とカラム名を二重引用符で囲む
         $sql = "DELETE FROM \"T_USER_INFO\" WHERE \"ID\" = :ID";
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':ID', $_GET['id'], PDO::PARAM_STR);
-        $stmt->execute();
 
-        // 削除件数を取得する
-        $deleteCount = $stmt->rowCount();
+        // GETパラメータのIDがセットされているか確認（安全のため）
+        if (isset($_GET['id'])) {
+            $stmt->bindParam(':ID', $_GET['id'], PDO::PARAM_STR);
+            $stmt->execute();
 
-        // コミット
-        $conn->commit();
+            // 削除件数を取得する
+            $deleteCount = $stmt->rowCount();
 
-        // 削除に成功した場合、ウィンドウを閉じるスクリプトを出力
-        if ($deleteCount > 0) { // 0件より大きい場合（削除された場合）
-            echo "<script type='text/javascript'>window.close();</script>";
+            // コミット
+            $conn->commit();
+
+            // 削除に成功した場合
+            if ($deleteCount > 0) {
+                // 親ウィンドウをリロードしてから、小窓を閉じる
+                echo "<script type='text/javascript'>";
+                echo "if (window.opener) {"; // 親ウィンドウが存在するか確認
+                echo "    window.opener.location.reload();"; // 親ウィンドウをリロード
+                echo "}";
+                echo "window.close();"; // この小窓を閉じる
+                echo "</script>";
+            } else {
+                // 削除対象が見つからなかった場合など、メッセージを表示して小窓を閉じる
+                echo "<script type='text/javascript'>";
+                echo "alert('削除対象のレコードが見つかりませんでした。');"; // 必要であればメッセージ表示
+                echo "window.close();"; // 小窓を閉じる
+                echo "</script>";
+            }
         } else {
-            // 削除対象が見つからなかった場合などの処理をここに追加することもできます
-            // 例: echo "削除対象のレコードが見つかりませんでした。";
+            // IDが指定されていない場合
+            echo "<script type='text/javascript'>";
+            echo "alert('削除するIDが指定されていません。');"; // メッセージ表示
+            echo "window.close();"; // 小窓を閉じる
+            echo "</script>";
         }
     } catch (PDOException $e) {
         // エラーハンドリング
-        print('Error:' . $e->getMessage());
+        error_log('Delete.php Error: ' . $e->getMessage()); // エラーログに記録
+        // エラーメッセージを小窓に表示してから閉じる
+        echo "<script type='text/javascript'>";
+        echo "alert('データベースエラーが発生しました。詳細: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "');";
         // ロールバック
-        $conn->rollBack();
+        if (isset($conn)) { // 接続が確立されているか確認
+            $conn->rollBack();
+        }
+        echo "window.close();"; // エラー時も小窓を閉じる
+        echo "</script>";
         die(); // スクリプトの実行を停止
     }
 ?>
