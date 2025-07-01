@@ -156,7 +156,7 @@
                     <td width="100" id="id"><?php echo htmlspecialchars(str_pad($row['ID'] ?? '', 6, '0', STR_PAD_LEFT)); ?></td>
                     <td width="100" name="name"><?php echo htmlspecialchars($row['NAME'] ?? ''); ?></td>
                     <td width="100" name="sex"><?php echo htmlspecialchars($row['SEX'] ?? ''); ?></td>
-                    <td width="100" name="postno"><?php echo htmlspecialchars(($row['POSTNO1'] ?? '') . "-" . ($row['POSTNO2'] ?? '')); ?></td>
+                    <td width="100" name="postno"><?php echo htmlspecialchars(($row['POSTNO1'] ?? '') . " - " . ($row['POSTNO2'] ?? '')); ?></td>
                     <td width="100" name="address1"><?php echo htmlspecialchars($row['ADDRESS1'] ?? ''); ?></td>
                     <td width="100" name="address2"><?php echo htmlspecialchars($row['ADDRESS2'] ?? ''); ?></td>
                     <td width="100" name="biko"><?php echo htmlspecialchars($row['BIKO'] ?? ''); ?></td>
