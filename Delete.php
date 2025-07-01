@@ -38,7 +38,7 @@
             // 削除に成功した場合
             if ($deleteCount > 0) {
                 // 成功メッセージをJSONで返す
-                echo json_encode(['success' => true, 'message' => 'レコードが正常に削除されました。']);
+                echo json_encode(['success' => true]);
             } else {
                 // 削除対象が見つからなかった場合
                 echo json_encode(['success' => false, 'message' => '削除対象のレコードが見つかりませんでした。']);

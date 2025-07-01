@@ -66,8 +66,6 @@
             })
             .then(data => {
                 if (data.success) {
-                    // 削除成功の場合、現在のウィンドウをリロードして一覧を更新
-                    alert(data.message); // 成功メッセージを表示（任意）
                     location.reload();
                 } else {
                     // 削除失敗の場合、エラーメッセージを表示
