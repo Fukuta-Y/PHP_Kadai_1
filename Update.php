@@ -34,8 +34,24 @@
             $ID = $row['ID'];  // 最大ID + 1
 
             // 初回時はNULLのため、ID = 1
-            if ($ID == null) {
+            if ($ID == null || $ID == 0) {
                 $ID = '1';
+            }
+
+            // すでにID = 1が存在する場合、次のIDを再度確認する
+            while (true) {
+                // 新しいIDがすでに存在しないことを確認
+                $sql = "SELECT COUNT(*) AS CNT FROM T_USER_INFO WHERE ID = :ID";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
+                $stmt->execute();
+                $checkCount = $stmt->fetchColumn();
+
+                if ($checkCount == "0") {
+                    break;  // 一意なIDが見つかったら終了
+                } else {
+                    $ID++;  // 次のIDを試す
+                }
             }
 
             // データを挿入
