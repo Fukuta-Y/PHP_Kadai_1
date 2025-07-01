@@ -8,14 +8,20 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libzip-dev \
     libxml2-dev \
+    libcurl4-openssl-dev \
+    libicu-dev \
+    libonig-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql zip
+    && docker-php-ext-install gd pdo pdo_mysql zip curl intl mbstring
 
 WORKDIR /app
 COPY . .
 
 # Composerをインストール
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Composerのインストール確認
+RUN composer --version
 
 # Composerのキャッシュをクリアしてから依存関係をインストール
 RUN composer clear-cache && composer install --no-dev --no-progress --verbose
