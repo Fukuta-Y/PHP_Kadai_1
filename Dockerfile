@@ -10,7 +10,7 @@ RUN apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    libpq-dev 
+    libpq-dev
 
 # 必要なPHP拡張をインストール
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -24,7 +24,6 @@ COPY --from=build /app /var/www/html
 
 # PostgreSQLのPDO拡張は通常デフォルトで有効化されているため、再度有効化は不要
 # 必要であれば、インストールや有効化を行います。
-# RUN docker-php-ext-enable pdo pdo_pgsql
 
 # Apacheで動作させる
 EXPOSE 80

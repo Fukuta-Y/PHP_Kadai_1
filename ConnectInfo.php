@@ -7,7 +7,7 @@ class ConnectInfo
 
     // ユーザー名とパスワード
     public $user = 'postgres.szdcftaezxmhxjxqdeyi';
-    public $password = 'Yuki1008!!!!!';
+    public $password = 'Yuki1008!!!!';
 
     // 接続情報を返す
     public function getCon()
