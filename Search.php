@@ -9,8 +9,12 @@
 
     try {
 
-        $conn = new PDO($ConnectInfo->getCon(), $ConnectInfo->getUser(), '', 
-                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+        $conn = new PDO(
+            $ConnectInfo->getCon(),               // 接続情報
+            $ConnectInfo->getUser(),              // ユーザー名
+            $ConnectInfo->getPassword(),          // パスワード
+            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) // エラーモード設定
+        );
 
         $sql = "select";
         $sql .= "    ID";
