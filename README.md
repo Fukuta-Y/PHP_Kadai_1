@@ -37,14 +37,14 @@ BIKO TEXT:
 
 「備考」なので、比較的長いテキストが格納される可能性があるため、TEXT 型が適しています。TEXT 型は長さに実質的な制限がありません。もし格納されるテキストが短いと分かっているなら VARCHAR(XXX) でも構いません。
 
-CREATE TABLE T_USER_INFO (
-    ID SERIAL PRIMARY KEY,
-    NAME VARCHAR(255) NOT NULL,
-    SEX INTEGER,
-    POSTNO VARCHAR(8),
-    ADDRESS1 VARCHAR(255),
-    ADDRESS2 VARCHAR(255),
-    BIKO TEXT
+CREATE TABLE "T_USER_INFO" (
+    "ID" SERIAL PRIMARY KEY,
+    "NAME" VARCHAR(255) NOT NULL,
+    "SEX" INTEGER,
+    "POSTNO" VARCHAR(8),
+    "ADDRESS1" VARCHAR(255),
+    "ADDRESS2" VARCHAR(255),
+    "BIKO" TEXT
 );
 </pre>
 
