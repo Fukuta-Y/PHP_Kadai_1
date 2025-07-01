@@ -1,205 +1,242 @@
 <?php
-    // session_start() をファイルの**最も先頭**に移動
-    // これにより、他の出力がされる前にセッションが開始されることが保証されます。
-    session_start();
+// session_start() をファイルの**最も先頭**に移動
+// これにより、他の出力がされる前にセッションが開始されることが保証されます。
+session_start();
 
-    require_once('MsgList.php');
-    require_once('ErrCheck.php');
-    require_once('ColumnList.php');
+require_once('MsgList.php');
+require_once('ErrCheck.php');
+require_once('ColumnList.php');
+require_once('Search.php'); // performSearch 関数を使うために追加
 
-    $errMsg = null;
-    $mode = null; // $mode を初期化しておく
+$errMsg = null;
+$mode = null; // $mode を初期化しておく
 
-    // インスタンス生成
-    $MsgList = new MsgList();
-    $ErrChk = new ErrCheck();
-    $ColumnList = new ColumnList();
+// インスタンス生成
+$MsgList = new MsgList();
+$ErrChk = new ErrCheck();
+$ColumnList = new ColumnList();
 
-    // 初期表示時（GETリクエスト）
-    if ($_SERVER["REQUEST_METHOD"] != "POST") {
+// 初期表示時（GETリクエスト）
+if ($_SERVER["REQUEST_METHOD"] != "POST") {
 
-        // 画面モードを取得する
-        // $_GET['mode'] が設定されているか確認し、設定されていなければデフォルト値を設定
-        if (isset($_GET['mode'])) {
-            $mode = $_GET['mode'];
-        } else {
-            // mode が設定されていない場合のデフォルト値を決める。
-            // 例えば、検索モード '1' やエラー時の動作など。
-            // この例では、未設定の場合に '1' (検索モード) としています。
-            $mode = '1'; // または、エラーとして処理するなど、適切なデフォルト値を設定
-        }
+    // 画面モードを取得する
+    if (isset($_GET['mode'])) {
+        $mode = $_GET['mode'];
+    } else {
+        $mode = '1'; // デフォルトは検索モード
+    }
 
-        // 画面モードをセッションに保存
-        $_SESSION['mode'] = $mode;
+    // 画面モードをセッションに保存
+    $_SESSION['mode'] = $mode;
 
-        $ID = null; //ID
-        $NAME = null; //名前
-        $SEX = '0';  //性別
-        $POSTNO = null; //郵便番号
-        $POS1 = null; //郵便番号1
-        $POS2 = null; //郵便番号2
-        $ADDRESS1 = null; //住所1
-        $ADDRESS2 = null; //住所2
-        $BIKO = null; //備考
+    $ID = null; //ID
+    $NAME = null; //名前
+    $SEX = '0';  //性別 (検索モードのデフォルトは未指定)
+    $POSTNO = null; //郵便番号
+    $POS1 = null; //郵便番号1
+    $POS2 = null; //郵便番号2
+    $ADDRESS1 = null; //住所1
+    $ADDRESS2 = null; //住所2
+    $BIKO = null; //備考
+    $row = null; // $row を初期化
 
-        // 選択画面の場合
-        if ($mode == "3") {
-            // $_GET['id'] も同様に存在チェックをするのが望ましい
-            if (isset($_GET['id'])) {
-                $ID = $_GET['id'];
-            } else {
-                // エラー処理またはデフォルト値の設定
-                $ID = null; // または適切なデフォルト値
-            }
-            // 検索処理のphpファイルを呼び出し
-            include('Search.php');
-        }
-    } else { // POSTリクエスト時
+    // 選択画面の場合 (IDに基づく単一レコードの検索)
+    if ($mode == "3") {
+        if (isset($_GET['id'])) {
+            $ID = $_GET['id'];
+            // performSearch 関数を呼び出して結果を取得
+            $searchResult = performSearch($ID, null, '0', null, null, null, null); // IDのみ指定
 
-        // 画面モードを取得する
-        // セッションからモードを取得。$_SESSION['mode']が設定されていない可能性も考慮
-        if (isset($_SESSION['mode'])) {
-            $mode = $_SESSION['mode'];
-        } else {
-            // セッションにモードがない場合のデフォルト値またはエラー処理
-            $mode = '1'; // 例えば、デフォルトを検索モードにするなど
-        }
-
-        // ... （この下の部分は変更なしでOK） ...
-
-        // 検索ボタン
-        if (isset($_POST['btnReSearch'])) {
-
-            $NAME  = trim($_POST["txtName"]); // 名前
-            $SEX  = trim($_POST["rdoSex"]); // 性別
-            $POS1  = trim($_POST["txtPostNo1"]); // 郵便番号1
-            $POS2  = trim($_POST["txtPostNo2"]); // 郵便番号2
-            $POSTNO = trim($_POST["txtPostNo1"]); // 郵便番号
-            $POSTNO .= trim($_POST["txtPostNo2"]); // 郵便番号
-            $ADDRESS1  = trim($_POST["txtAddress1"]); // 住所１
-            $ADDRESS2  = trim($_POST["txtAddress2"]); // 住所２
-            $BIKO  = trim($_POST["txtBiko"]); // 備考
-
-            // 郵便番号１と郵便番号２がともに空でない場合
-            if ($ErrChk->nullCheck($POS1) && $ErrChk->nullCheck($POS2)) {
-                // 郵便番号１が３桁の場合
-                if ($ErrChk->lenSameCheck($POS1, 3)) {
-                    //数値かどうか
-                    if ($ErrChk->numCheck($POS1, 3)) {
-                        // 郵便番号２が４桁の場合
-                        if ($ErrChk->lenSameCheck($POS2, 4)) {
-                            //数値かどうか
-                            if (!$ErrChk->numCheck($POS2, 4)) {
-                                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos2());
-                            }
-                        } else {
-                            $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2(), 4);
-                        }
+            if ($searchResult['error']) {
+                $errMsg = "データ取得エラー: " . $searchResult['error'];
+            } else if (!empty($searchResult['result'])) {
+                $row = $searchResult['result'][0]; // 最初の結果を取得
+                // $row の値をフォーム変数にセット
+                $NAME = $row['NAME'] ?? null;
+                // DBからのSEXが'男'/'女'で返る場合と'1'/'2'で返る場合を考慮
+                if (isset($row['SEX'])) {
+                    if ($row['SEX'] == '男' || $row['SEX'] == '1') {
+                        $SEX = '1';
+                    } else if ($row['SEX'] == '女' || $row['SEX'] == '2') {
+                        $SEX = '2';
                     } else {
-                        $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
+                        $SEX = '0'; // 未設定の場合
                     }
                 } else {
-                    $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos1(), 3);
+                    $SEX = '0';
                 }
-                // 郵便番号１と郵便番号２の片方のみ空の場合
-            } else if ($POS1 != null || $POS2 != null) {
-                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPostno());
-            }
 
-            // エラーが０件の場合
-            if (!$ErrChk->nullCheck($errMsg)) {
-                $_SESSION['txtName'] = $NAME; // 名前
-                $_SESSION['rdoSex'] = $SEX; // 性別
-                $_SESSION['txtPostNo'] = $POSTNO;
-                $_SESSION['txtAddress1'] = $ADDRESS1;  // 住所1
-                $_SESSION['txtAddress2'] = $ADDRESS2;  // 住所2
-                $_SESSION['txtBiko'] = $BIKO;  // 備考
+                $POSTNO_FULL = $row['POSTNO'] ?? null; // 元のPOSTNOを保持
+                if ($POSTNO_FULL) {
+                    $POS1 = substr($POSTNO_FULL, 0, 3);
+                    $POS2 = substr($POSTNO_FULL, 3, 4);
+                    $POSTNO = $POSTNO_FULL; // 結合された郵便番号
+                } else {
+                    $POS1 = null;
+                    $POS2 = null;
+                    $POSTNO = null;
+                }
+                $ADDRESS1 = $row['ADDRESS1'] ?? null;
+                $ADDRESS2 = $row['ADDRESS2'] ?? null;
+                $BIKO = $row['BIKO'] ?? null;
+            } else {
+                $errMsg = $MsgList->getMsg('010'); // 検索結果なし
             }
+        } else {
+            // IDが指定されていない場合のエラーハンドリング
+            $errMsg = "更新対象のIDが指定されていません。"; // または適切なメッセージ
+            $mode = '1'; // 検索モードに戻すなど
+        }
+    }
+} else { // POSTリクエスト時
 
-            // 登録ボタン（登録モード・更新モード）
-        } else if (isset($_POST['btnInsert']) || isset($_POST['btnUpdate'])) {
+    // 画面モードを取得する
+    if (isset($_SESSION['mode'])) {
+        $mode = $_SESSION['mode'];
+    } else {
+        $mode = '1'; // セッションにモードがない場合のデフォルト
+    }
 
-            // 更新モードの場合のみ
-            if (isset($_POST['btnUpdate'])) {
-                $ID  = $_POST["lblId"]; // ID
-            }
+    // 検索ボタン
+    if (isset($_POST['btnReSearch'])) {
 
-            $NAME  = trim($_POST["txtName"]); // 名前
-            $SEX  = trim($_POST["rdoSex"]); // 性別
-            $POS1  = trim($_POST["txtPostNo1"]); // 郵便番号1
-            $POS2  = trim($_POST["txtPostNo2"]); // 郵便番号2
-            $POSTNO = trim($_POST["txtPostNo1"]); // 郵便番号
-            $POSTNO .= trim($_POST["txtPostNo2"]); // 郵便番号
-            $ADDRESS1  = trim($_POST["txtAddress1"]); // 住所１
-            $ADDRESS2  = trim($_POST["txtAddress2"]); // 住所２
-            $BIKO  = trim($_POST["txtBiko"]); // 備考
+        $NAME  = trim($_POST["txtName"]); // 名前
+        $SEX  = trim($_POST["rdoSex"]); // 性別
+        $POS1  = trim($_POST["txtPostNo1"]); // 郵便番号1
+        $POS2  = trim($_POST["txtPostNo2"]); // 郵便番号2
+        $POSTNO = trim($_POST["txtPostNo1"]); // 郵便番号
+        $POSTNO .= trim($_POST["txtPostNo2"]); // 郵便番号
+        $ADDRESS1  = trim($_POST["txtAddress1"]); // 住所１
+        $ADDRESS2  = trim($_POST["txtAddress2"]); // 住所２
+        $BIKO  = trim($_POST["txtBiko"]); // 備考
 
-            // 名前は入力必須
-            if (!$ErrChk->nullCheck($NAME)) {
-                $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getName());
-            }
-            // 郵便番号1はともに入力必須
-            else if (!$ErrChk->nullCheck($POS1)) {
-                $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getPos1());
-            }
-            // 郵便番号2はともに入力必須
-            else if (!$ErrChk->nullCheck($POS2)) {
-                $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getPos2());
-            }
-            // 郵便番号1の書式チェック
-            else if (!$ErrChk->numCheck($POS1, 3)) {
-                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
-            }
-            // 郵便番号2の書式チェック
-            else if (!$ErrChk->numCheck($POS2, 4)) {
-                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos2());
-            }
-            // 名前が1０桁以下かどうか（必須項目）
-            else if (!$ErrChk->lenOverCheck($NAME, 10)) {
-                $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getName(), 10);
-            }
-            // 郵便番号１が3桁かどうか（必須項目）
-            else if (!$ErrChk->lenSameCheck($POS1, 3)) {
+        // 郵便番号１と郵便番号２がともに空でない場合
+        if ($ErrChk->nullCheck($POS1) && $ErrChk->nullCheck($POS2)) {
+            // 郵便番号１が３桁の場合
+            if ($ErrChk->lenSameCheck($POS1, 3)) {
+                //数値かどうか
+                if ($ErrChk->numCheck($POS1, 3)) {
+                    // 郵便番号２が４桁の場合
+                    if ($ErrChk->lenSameCheck($POS2, 4)) {
+                        //数値かどうか
+                        if (!$ErrChk->numCheck($POS2, 4)) {
+                            $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos2());
+                        }
+                    } else {
+                        $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2(), 4);
+                    }
+                } else {
+                    $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
+                }
+            } else {
                 $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos1(), 3);
             }
-            // 郵便番号2が4桁かどうか（必須項目）
-            else if (!$ErrChk->lenSameCheck($POS2, 4)) {
-                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2(), 4);
-            } else {
-                // 住所1の文字数チェック（任意項目）
-                if ($ErrChk->nullCheck($ADDRESS1)) {
-                    // 住所1が15桁以下かどうか
-                    if (!$ErrChk->lenOverCheck($ADDRESS1, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getAddress1(), 15);
-                    }
-                }
-                // 住所２の文字数チェック（任意項目）
-                if ($ErrChk->nullCheck($ADDRESS2)) {
-                    // 住所2が15桁以下かどうか
-                    if (!$ErrChk->lenOverCheck($ADDRESS2, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getAddress2(), 15);
-                    }
-                }
-                // 備考の文字数チェック（任意項目）
-                if ($ErrChk->nullCheck($BIKO)) {
-                    // 住所2が15桁以下かどうか
-                    if (!$ErrChk->lenOverCheck($BIKO, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getBiko(), 15);
-                    }
+            // 郵便番号１と郵便番号２の片方のみ空の場合
+        } else if ($POS1 != null || $POS2 != null) {
+            $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPostno());
+        }
+
+        // エラーが０件の場合
+        if (!$ErrChk->nullCheck($errMsg)) {
+            // 検索条件をセッションに保存
+            $_SESSION['search_name'] = $NAME; // 検索条件は 'search_' プレフィックスで統一することを推奨
+            $_SESSION['search_sex'] = $SEX;
+            $_SESSION['search_postno'] = $POSTNO;
+            $_SESSION['search_address1'] = $ADDRESS1;
+            $_SESSION['search_address2'] = $ADDRESS2;
+            $_SESSION['search_biko'] = $BIKO;
+
+            // SearchList.php へリダイレクト
+            header('Location: SearchList.php');
+            exit; // 必ず exit; を追加
+        }
+
+        // 登録ボタン（登録モード・更新モード）
+    } else if (isset($_POST['btnInsert']) || isset($_POST['btnUpdate'])) {
+
+        // 更新モードの場合のみ
+        if (isset($_POST['btnUpdate'])) {
+            $ID  = $_POST["lblId"]; // ID
+        } else {
+            $ID = null; // 新規登録の場合はIDはnull
+        }
+
+        $NAME  = trim($_POST["txtName"]); // 名前
+        $SEX  = trim($_POST["rdoSex"]); // 性別
+        $POS1  = trim($_POST["txtPostNo1"]); // 郵便番号1
+        $POS2  = trim($_POST["txtPostNo2"]); // 郵便番号2
+        $POSTNO = trim($_POST["txtPostNo1"]); // 郵便番号
+        $POSTNO .= trim($_POST["txtPostNo2"]); // 郵便番号
+        $ADDRESS1  = trim($_POST["txtAddress1"]); // 住所１
+        $ADDRESS2  = trim($_POST["txtAddress2"]); // 住所２
+        $BIKO  = trim($_POST["txtBiko"]); // 備考
+
+        // 名前は入力必須
+        if (!$ErrChk->nullCheck($NAME)) {
+            $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getName());
+        }
+        // 郵便番号1はともに入力必須
+        else if (!$ErrChk->nullCheck($POS1)) {
+            $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getPos1());
+        }
+        // 郵便番号2はともに入力必須
+        else if (!$ErrChk->nullCheck($POS2)) {
+            $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getPos2());
+        }
+        // 郵便番号1の書式チェック
+        else if (!$ErrChk->numCheck($POS1, 3)) {
+            $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
+        }
+        // 郵便番号2の書式チェック
+        else if (!$ErrChk->numCheck($POS2, 4)) {
+            $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos2());
+        }
+        // 名前が1０桁以下かどうか（必須項目）
+        else if (!$ErrChk->lenOverCheck($NAME, 10)) {
+            $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getName(), 10);
+        }
+        // 郵便番号１が3桁かどうか（必須項目）
+        else if (!$ErrChk->lenSameCheck($POS1, 3)) {
+            $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos1(), 3);
+        }
+        // 郵便番号2が4桁かどうか（必須項目）
+        else if (!$ErrChk->lenSameCheck($POS2, 4)) {
+            $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2(), 4);
+        } else {
+            // 住所1の文字数チェック（任意項目）
+            if ($ErrChk->nullCheck($ADDRESS1)) {
+                // 住所1が15桁以下かどうか
+                if (!$ErrChk->lenOverCheck($ADDRESS1, 15)) {
+                    $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getAddress1(), 15);
                 }
             }
-
-            // エラーが０件の場合
-            if (!$ErrChk->nullCheck($errMsg)) {
-                // 検索処理のphpファイルを呼び出し
-                include('Update.php');
+            // 住所２の文字数チェック（任意項目）
+            if ($ErrChk->nullCheck($ADDRESS2)) {
+                // 住所2が15桁以下かどうか
+                if (!$ErrChk->lenOverCheck($ADDRESS2, 15)) {
+                    $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getAddress2(), 15);
+                }
+            }
+            // 備考の文字数チェック（任意項目）
+            if ($ErrChk->nullCheck($BIKO)) {
+                // 住所2が15桁以下かどうか
+                if (!$ErrChk->lenOverCheck($BIKO, 15)) {
+                    $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getBiko(), 15);
+                }
             }
         }
 
-        // エラーが０件の場合、この画面を終了させる
+        // エラーが０件の場合
         if (!$ErrChk->nullCheck($errMsg)) {
-            // 自画面を閉じる
-            echo "<script type='text/javascript'>
+            include('Update.php'); // 更新または登録処理を実行
+        }
+    }
+
+    // エラーが０件の場合、この画面を終了させる
+    // 登録/更新ボタンが押された場合のみ閉じる処理を実行
+    if (!$ErrChk->nullCheck($errMsg) && (isset($_POST['btnInsert']) || isset($_POST['btnUpdate']))) {
+        // 自画面を閉じる
+        echo "<script type='text/javascript'>
                 if (window.opener) {
                     window.opener.location.reload();
                 } else {
@@ -207,8 +244,9 @@
                     window.close();
                 }
                 </script>";
-        }
+        exit; // JavaScriptによるクローズ後もPHPの実行を停止
     }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -224,7 +262,7 @@
         <table style="width:500px;height:50px;">
             <tr>
                 <td>
-                    <label style="width:100px;color:red;" id="errLabel"><?php echo $errMsg; ?></label>
+                    <label style="width:100px;color:red;" id="errLabel"><?php echo htmlspecialchars($errMsg); ?></label>
                 </td>
             </tr>
         </table>
@@ -234,9 +272,9 @@
                 echo "<tr> ";
                 echo "<td width='100'>会員番号</td>";
                 echo "<td width='280'>";
-                echo str_pad($ID, 6, 0, STR_PAD_LEFT);
+                echo str_pad(htmlspecialchars($ID), 6, '0', STR_PAD_LEFT); // IDもhtmlspecialchars
                 echo "</td> ";
-                echo "<input type='hidden' name='lblId' maxlength='7' size='10' value=$ID>";
+                echo "<input type='hidden' name='lblId' value='" . htmlspecialchars($ID) . "'>"; // hidden inputもエスケープ
                 echo "</tr> ";
             }
             ?>
@@ -244,17 +282,12 @@
                 <td width="100">名前</td>
                 <td width="280">
                     <?php
-                    // ErrCheck クラスのインスタンスはすでに作成されているので、ここで再度 require_once や new する必要はありません
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // エラーチェックの内容がある場合は前回の内容を設定する
+                    // エラーチェックの内容がある場合、または初期表示時で$NAMEが設定されている場合
                     if ($ErrChk->nullCheck($NAME) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"$NAME\">"; // 値をダブルクォートで囲む
+                        echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"" . htmlspecialchars($NAME) . "\">";
                     } else {
+                        // $mode == "3" の場合は、$rowから値を取得
                         if ($mode == "3") {
-                            // $row がどこから来ているのか不明ですが、未定義の場合エラーになる可能性があります。
-                            // Search.php が $row を定義していると仮定します。
-                            // また、値は必ずダブルクォートで囲みましょう。
                             echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"";
                             if (isset($row['NAME'])) {
                                 echo htmlspecialchars($row['NAME']);
@@ -271,44 +304,41 @@
                 <td width="100">性別</td>
                 <td width="280">
                     <?php
-                    // ErrCheck クラスのインスタンスはすでに作成されているので、ここで再度 require_once や new する必要はありません
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
                     // 初期表示の場合
                     if (!$ErrChk->nullCheck($errMsg)) {
-                        // 登録モードの初期表示の場合
+                        // 登録モードの初期表示の場合（通常は男か女を選択させる）
                         if ($mode == "2") {
                             echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
                             echo "<input type='radio' name='rdoSex' value='2'>女</input>";
                         }
                         // 更新モードの初期表示の場合
                         else if ($mode == "3") {
-                            // $row['SEX'] も同様に存在チェック
-                            $sexValue = isset($row['SEX']) ? $row['SEX'] : ''; // デフォルト値を設定
-                            if ($sexValue == "男" || $sexValue == "1") { // DBによっては'1'で保存されている可能性も考慮
+                            $sexValue = $SEX; // 初期化時に$SEXにDBからの値が設定されている
+                            if ($sexValue == "1") {
                                 echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
                                 echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                            } else if ($sexValue == "女" || $sexValue == "2") { // DBによっては'2'で保存されている可能性も考慮
+                            } else if ($sexValue == "2") {
                                 echo "<input type='radio' name='rdoSex' value='1'>男</input>";
                                 echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
                             } else {
-                                // デフォルトとして男にチェックを入れるなど
+                                // デフォルトとして男にチェックを入れるか、未設定状態にする
                                 echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
                                 echo "<input type='radio' name='rdoSex' value='2'>女</input>";
                             }
-                            // 検索モードの初期表示の場合
-                        } else if ($mode == "1") {
-                            echo "<input type='radio' name='rdoSex' value='1'>男</input>"; // 検索モードでは、初期は未指定にしたい場合が多い
-                            echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                            echo "<input type='radio' name='rdoSex' value='0'  checked='checked'>未指定</input>";
                         }
-                        // 入力チェックで再表示の場合
-                    } else {
-                        // 未指定の場合
-                        if ($SEX == "0") { // 文字列比較でなく数値比較を推奨
+                        // 検索モードの初期表示の場合
+                        else if ($mode == "1") {
+                            // 検索モードの初期値は未指定
                             echo "<input type='radio' name='rdoSex' value='1'>男</input>";
                             echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                            echo "<input type='radio' name='rdoSex' value='0'  checked='checked'>未指定</input>";
+                            echo "<input type='radio' name='rdoSex' value='0' checked='checked'>未指定</input>";
+                        }
+                    } else { // 入力チェックで再表示の場合
+                        // 未指定の場合
+                        if ($SEX == "0") {
+                            echo "<input type='radio' name='rdoSex' value='1'>男</input>";
+                            echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                            echo "<input type='radio' name='rdoSex' value='0' checked='checked'>未指定</input>";
                         } else {
                             if ($SEX == "1") {
                                 echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
@@ -330,40 +360,13 @@
                 <td width="100">郵便番号</td>
                 <td width="280">
                     <?php
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 完全な初期表示の場合
-                    // !isset($POS1) && !isset($POS2) に変更して、変数が全くセットされていないかをチェックする
-                    if (!isset($POS1) && !isset($POS2) && !$ErrChk->nullCheck($errMsg)) {
-                        if ($mode == "3") {
-                            // $row['POSTNO1'] / $row['POSTNO2'] も同様に存在チェックとエスケープ
-                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=\"";
-                            if (isset($row['POSTNO']) && strlen($row['POSTNO']) >= 3) echo htmlspecialchars(substr($row['POSTNO'], 0, 3));
-                            echo "\">";
-                            echo "-";
-                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=\"";
-                            if (isset($row['POSTNO']) && strlen($row['POSTNO']) >= 7) echo htmlspecialchars(substr($row['POSTNO'], 3, 4));
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
-                            echo "-";
-                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
-                        }
-                        // 入力チェックで再表示の場合、またはデータがすでに設定されている場合
-                    } else {
-                        // 中身の設定がされている場合は設定する
-                        if ($ErrChk->nullCheck($POS1)) {
-                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=\"$POS1\">";
-                        } else {
-                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
-                        }
-                        echo "-";
-                        if ($ErrChk->nullCheck($POS2)) {
-                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=\"$POS2\">";
-                        } else {
-                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
-                        }
-                    }
+                    // 初期表示時、または入力チェックで再表示の場合
+                    $pos1_display = htmlspecialchars($POS1 ?? '');
+                    $pos2_display = htmlspecialchars($POS2 ?? '');
+
+                    echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=\"$pos1_display\">";
+                    echo "-";
+                    echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=\"$pos2_display\">";
                     ?>
                 </td>
             </tr>
@@ -371,21 +374,9 @@
                 <td width="100">住所１</td>
                 <td width="280">
                     <?php
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 入力チェックで再表示の場合
-                    if ($ErrChk->nullCheck($ADDRESS1) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=\"$ADDRESS1\">";
-                    } else {
-                        if ($mode == "3") {
-                            // $row['ADDRESS1'] も同様に存在チェックとエスケープ
-                            echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=\"";
-                            if (isset($row['ADDRESS1'])) echo htmlspecialchars($row['ADDRESS1']);
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtAddress1' maxlength='15' size='25'>";
-                        }
-                    }
+                    // 入力チェックで再表示の場合、または初期表示時で$ADDRESS1が設定されている場合
+                    $address1_display = htmlspecialchars($ADDRESS1 ?? '');
+                    echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=\"$address1_display\">";
                     ?>
                 </td>
             </tr>
@@ -393,21 +384,9 @@
                 <td width="100">住所２</td>
                 <td width="280">
                     <?php
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 入力チェックで再表示の場合
-                    if ($ErrChk->nullCheck($ADDRESS2) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=\"$ADDRESS2\">";
-                    } else {
-                        if ($mode == "3") {
-                            // $row['ADDRESS2'] も同様に存在チェックとエスケープ
-                            echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=\"";
-                            if (isset($row['ADDRESS2'])) echo htmlspecialchars($row['ADDRESS2']);
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtAddress2' maxlength='15' size='25'>";
-                        }
-                    }
+                    // 入力チェックで再表示の場合、または初期表示時で$ADDRESS2が設定されている場合
+                    $address2_display = htmlspecialchars($ADDRESS2 ?? '');
+                    echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=\"$address2_display\">";
                     ?>
                 </td>
             </tr>
@@ -415,21 +394,9 @@
                 <td width="100">備考</td>
                 <td width="280">
                     <?php
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 入力チェックで再表示の場合
-                    if ($ErrChk->nullCheck($BIKO) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"$BIKO\">";
-                    } else {
-                        if ($mode == "3") {
-                            // $row['BIKO'] も同様に存在チェックとエスケープ
-                            echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"";
-                            if (isset($row['BIKO'])) echo htmlspecialchars($row['BIKO']);
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"$BIKO\">";
-                        }
-                    }
+                    // 入力チェックで再表示の場合、または初期表示時で$BIKOが設定されている場合
+                    $biko_display = htmlspecialchars($BIKO ?? '');
+                    echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"$biko_display\">";
                     ?>
                 </td>
             <tr>

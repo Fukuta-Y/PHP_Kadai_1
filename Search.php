@@ -2,110 +2,80 @@
     require_once('ErrCheck.php');
     require_once('ConnectInfo.php');
 
-    $dbCnt = 0;
-    // インスタンス生成
-    $ErrChk = new ErrCheck();
-    $ConnectInfo = new ConnectInfo();
+    function performSearch(
+        $ID = null,
+        $NAME = null,
+        $SEX = '0', // デフォルト値 '0' を設定
+        $POSTNO = null,
+        $ADDRESS1 = null,
+        $ADDRESS2 = null,
+        $BIKO = null
+    ) {
+        $ErrChk = new ErrCheck();
+        $ConnectInfo = new ConnectInfo();
+        $result = [];
+        $dbCnt = 0;
+        $error = null;
 
-    try {
+        try {
+            $conn = new PDO(
+                $ConnectInfo->getCon(),
+                $ConnectInfo->getUser(),
+                $ConnectInfo->getPassword(),
+                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+            );
 
-        $conn = new PDO(
-            $ConnectInfo->getCon(),               // 接続情報
-            $ConnectInfo->getUser(),              // ユーザー名
-            $ConnectInfo->getPassword(),          // パスワード
-            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) // エラーモード設定
-        );
+            $sql = "SELECT ID, NAME, CASE SEX WHEN '1' THEN '男' WHEN '2' THEN '女' ELSE '未設定' END AS SEX, ";
+            $sql .= "MID(POSTNO FROM 1 FOR 3) AS POSTNO1, MID(POSTNO FROM 4 FOR 4) AS POSTNO2, POSTNO, ADDRESS1, ADDRESS2, BIKO "; // POSTNOも取得するように修正
+            $sql .= "FROM T_USER_INFO WHERE 1=1 ";
 
-        $sql = "select";
-        $sql .= "    ID";
-        $sql .= "   ,NAME";
-        $sql .= "   ,CASE SEX WHEN '1' THEN '男' WHEN '2' THEN '女' ELSE '未設定' END AS SEX";
-        $sql .= "   ,MID(POSTNO FROM 1 FOR 3) AS POSTNO1";
-        $sql .= "   ,MID(POSTNO FROM 4 FOR 4) AS POSTNO2";
-        $sql .= "   ,ADDRESS1";
-        $sql .= "   ,ADDRESS2";
-        $sql .= "   ,BIKO";
-        $sql .= " from";
-        $sql .= "  T_USER_INFO";
-        $sql .= "  WHERE 1=1 ";
+            $params = [];
 
-        // 検索条件の設定
-        if($ErrChk->nullCheck($ID)) {
-            $sql .= " AND ID = :ID";
+            if ($ErrChk->nullCheck($ID)) {
+                $sql .= " AND ID = :ID";
+                $params[':ID'] = $ID;
+            }
+            if ($ErrChk->nullCheck($NAME)) {
+                $sql .= " AND NAME LIKE :NAME";
+                $params[':NAME'] = '%' . $NAME . '%';
+            }
+            if ($SEX !== "0") { // 文字列 '0' も考慮
+                $sql .= " AND SEX = :SEX";
+                $params[':SEX'] = (int)$SEX; // INTにキャスト
+            }
+            if ($ErrChk->nullCheck($POSTNO)) {
+                $sql .= " AND POSTNO = :POSTNO";
+                $params[':POSTNO'] = $POSTNO;
+            }
+            if ($ErrChk->nullCheck($ADDRESS1)) {
+                $sql .= " AND ADDRESS1 LIKE :ADDRESS1";
+                $params[':ADDRESS1'] = '%' . $ADDRESS1 . '%';
+            }
+            if ($ErrChk->nullCheck($ADDRESS2)) {
+                $sql .= " AND ADDRESS2 LIKE :ADDRESS2";
+                $params[':ADDRESS2'] = '%' . $ADDRESS2 . '%';
+            }
+            if ($ErrChk->nullCheck($BIKO)) {
+                $sql .= " AND BIKO LIKE :BIKO";
+                $params[':BIKO'] = '%' . $BIKO . '%';
+            }
+
+            $stmt = $conn->prepare($sql);
+            foreach ($params as $key => &$val) {
+                // PDO::PARAM_INT を適切に使うために実際の型をチェック
+                $pdoParamType = PDO::PARAM_STR;
+                if ($key === ':SEX') {
+                    $pdoParamType = PDO::PARAM_INT;
+                }
+                $stmt->bindParam($key, $val, $pdoParamType);
+            }
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC); // 連想配列で取得
+            $dbCnt = count($result);
+        } catch (PDOException $e) {
+            error_log('Database Error in performSearch: ' . $e->getMessage()); // サーバーログに出力
+            $error = $e->getMessage();
         }
-
-        if($ErrChk->nullCheck($NAME)) {
-            $sql .= " AND NAME LIKE :NAME";
-        }
-
-        if($SEX != "0") {
-            $sql .= " AND SEX = :SEX";
-        }
-
-        if($ErrChk->nullCheck($POSTNO)) {
-            $sql .= " AND POSTNO =:POSTNO";
-        }
-
-        if($ErrChk->nullCheck($ADDRESS1)) {
-            $sql .= " AND ADDRESS1 LIKE :ADDRESS1";
-        }
-
-        if($ErrChk->nullCheck($ADDRESS2)) {
-            $sql .= " AND ADDRESS2 LIKE :ADDRESS2";    
-        }
-
-        if($ErrChk->nullCheck($BIKO)) {
-            $sql .= " AND BIKO LIKE :BIKO";
-        }
-
-        // SQLの設定
-        $stmt = $conn->prepare($sql);
-
-        // バインド設定
-        if($ErrChk->nullCheck($ID)) {
-            $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
-        }
-
-        if($ErrChk->nullCheck($NAME)) {
-            $NAME = '%'.$NAME.'%';
-            $stmt->bindParam(':NAME',$NAME, PDO::PARAM_STR);
-        }
-
-        if($SEX != "0") {
-            $stmt->bindParam(':SEX', $SEX, PDO::PARAM_INT);
-        }
-
-        if($ErrChk->nullCheck($POSTNO)) {
-            $stmt->bindParam(':POSTNO', $POSTNO, PDO::PARAM_STR);
-        }
-
-        if($ErrChk->nullCheck($ADDRESS1)) {
-            $ADDRESS1 = '%'.$ADDRESS1.'%';
-            $stmt->bindParam(':ADDRESS1', $ADDRESS1, PDO::PARAM_STR);
-        }
-
-        if($ErrChk->nullCheck($ADDRESS2)) {
-            $ADDRESS2 = '%'.$ADDRESS2.'%';
-            $stmt->bindParam(':ADDRESS2', $ADDRESS2, PDO::PARAM_STR);
-        }
-
-        if($ErrChk->nullCheck($BIKO)) {
-            $BIKO = '%'.$BIKO.'%';
-            $stmt->bindParam(':BIKO', $BIKO, PDO::PARAM_STR);
-        }
-
-        $stmt->execute();
-        $result = $stmt->fetchAll();
-
-        // データ件数をカウントする
-        foreach($result as $row) {
-            $dbCnt++;
-        }
-
-        $_SESSION['dbCnt'] = $dbCnt; //取得数を保持
-
-    } catch (PDOException $e){ 
-        print('Error:'.$e->getMessage());
-        die();
+        return ['result' => $result, 'count' => $dbCnt, 'error' => $error];
     }
 ?>
