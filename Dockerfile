@@ -22,8 +22,9 @@ FROM php:8.2-apache
 WORKDIR /app
 COPY --from=build /app /var/www/html
 
-# 必要なPHP拡張がインストールされていることを確認
-RUN docker-php-ext-enable pdo pdo_pgsql  # PostgreSQLのPDO拡張を有効にする
+# PostgreSQLのPDO拡張は通常デフォルトで有効化されているため、再度有効化は不要
+# 必要であれば、インストールや有効化を行います。
+# RUN docker-php-ext-enable pdo pdo_pgsql
 
 # Apacheで動作させる
 EXPOSE 80
