@@ -44,3 +44,13 @@ CREATE TABLE T_USER_INFO (
 );
 </pre>
 
+
+デプロイ先 https://dashboard.render.com/web/srv-d1bvheje5dus73f16d7g
+
+使用時は毎回「Clear build cache & deploy」を実行すること。
+
+DB側も起動すること。
+https://supabase.com/dashboard/project/szdcftaezxmhxjxqdeyi
+
+
+
