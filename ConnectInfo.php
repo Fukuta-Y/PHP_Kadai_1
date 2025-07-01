@@ -27,3 +27,4 @@ class ConnectInfo
         return $this->password;
     }
 }
+?>
