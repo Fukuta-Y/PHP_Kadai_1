@@ -1,27 +1,35 @@
 <?php
     require_once('ConnectInfo.php');
-    header('Content-Type: application/json'); // JSONレスポンスであることを指定
 
+    // インスタンス生成
     $ConnectInfo = new ConnectInfo();
-    $response = ['success' => false, 'message' => ''];
 
     try {
+        // PostgreSQL データベースへの接続
         $conn = new PDO(
-            $ConnectInfo->getCon(),
-            $ConnectInfo->getUser(),
-            $ConnectInfo->getPassword(),
-            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+            $ConnectInfo->getCon(),               // 接続情報
+            $ConnectInfo->getUser(),              // ユーザー名
+            $ConnectInfo->getPassword(),          // パスワード
+            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) // エラーモード設定
         );
+
+        // トランザクションを開始する
         $conn->beginTransaction();
 
+        // DELETE処理
+        // テーブル名とカラム名を二重引用符で囲む
         $sql = "DELETE FROM \"T_USER_INFO\" WHERE \"ID\" = :ID";
         $stmt = $conn->prepare($sql);
-
+        // GETパラメータのIDがセットされているか確認し、そうでなければエラーとする
         if (isset($_GET['id'])) {
             $stmt->bindParam(':ID', $_GET['id'], PDO::PARAM_STR);
             $stmt->execute();
-            $deleteCount = $stmt->rowCount();
-            $conn->commit();
+
+        // 削除件数を取得する
+        $deleteCount = $stmt->rowCount();
+
+        // コミット
+        $conn->commit();
 
             if ($deleteCount > 0) {
                 $response['success'] = true;
@@ -33,11 +41,15 @@
             $response['message'] = '削除するIDが指定されていません。';
         }
     } catch (PDOException $e) {
+        // エラーハンドリング
+        print('Error:' . $e->getMessage());
         $response['message'] = 'エラーが発生しました: ' . $e->getMessage();
+        // ロールバック
         if (isset($conn)) {
             $conn->rollBack();
         }
     } finally {
+        // JSON形式でレスポンスを出力し、スクリプトの実行を停止
         echo json_encode($response);
         exit();
     }
