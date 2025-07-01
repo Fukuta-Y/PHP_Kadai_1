@@ -49,17 +49,38 @@
         // 更新画面を呼び出す
         window.open("MasterMente.php?mode=3&id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
     }
-    // 削除ボタン
+
+    // 削除ボタン (Ajaxを使用するように変更)
     function deleteRow(key) {
-        // 確認
-        if (!confirm("<?php echo htmlspecialchars($MsgList->getMsg('003')); ?>")) return; // メッセージもエスケープ
+        // 確認メッセージを表示
+        if (!confirm("<?php echo htmlspecialchars($MsgList->getMsg('003')); ?>")) {
+            return; // キャンセルされたら処理を中断
+        }
 
-        // 削除画面を呼び出す
-        window.open("Delete.php?id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
-
-        // 自画面を、リロードする (親ウィンドウのリロード)
-        window.opener.location.reload();
+        // AjaxリクエストをDelete.phpに送信
+        fetch("Delete.php?id=" + key)
+            .then(response => {
+                if (!response.ok) {
+                    // HTTPエラーの場合
+                    throw new Error('ネットワークレスポンスが正常ではありませんでした: ' + response.statusText);
+                }
+                return response.json(); // JSONレスポンスを解析
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message); // 成功メッセージを表示
+                    // 削除後、現在のページをリロードして変更を反映
+                    window.location.reload();
+                } else {
+                    alert("削除に失敗しました: " + data.message); // エラーメッセージを表示
+                }
+            })
+            .catch(error => {
+                console.error('削除中にエラーが発生しました:', error);
+                alert("削除中に予期せぬエラーが発生しました。詳細はコンソールを確認してください。");
+            });
     }
+
     // 検索条件リンク
     function searchRow() {
         // 検索条件画面を呼び出す
