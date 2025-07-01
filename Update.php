@@ -8,8 +8,13 @@
     try {
 
         // DBコネクションを取得する
-        $conn = new PDO($ConnectInfo->getCon(), $ConnectInfo->getUser(), '', 
-                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+        // PostgreSQL データベースへの接続
+        $conn = new PDO(
+            $ConnectInfo->getCon(),               // 接続情報
+            $ConnectInfo->getUser(),              // ユーザー名
+            $ConnectInfo->getPassword(),          // パスワード
+            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) // エラーモード設定
+        );
 
         // トランザクションを開始する
         $conn->beginTransaction();
