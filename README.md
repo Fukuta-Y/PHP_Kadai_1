@@ -2,7 +2,7 @@
 
 https://user-info-search.onrender.com/MasterMente.php?mode=1
 
-
+<pre>
 テーブル作成は以下
 
 PostgreSQL用 CREATE TABLE 文
@@ -37,7 +37,6 @@ BIKO TEXT:
 
 「備考」なので、比較的長いテキストが格納される可能性があるため、TEXT 型が適しています。TEXT 型は長さに実質的な制限がありません。もし格納されるテキストが短いと分かっているなら VARCHAR(XXX) でも構いません。
 
-<pre>
 CREATE TABLE T_USER_INFO (
     ID SERIAL PRIMARY KEY,
     NAME VARCHAR(255) NOT NULL,
