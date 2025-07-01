@@ -23,15 +23,18 @@
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
         $stmt->execute();
-        $result = $stmt->fetchAll();
 
-        // データ件数を取得する
-        foreach($result as $row) {
-            $getCnt = $row['CNT'];
-        }
+        // 警告が発生していた箇所の修正
+        // fetchAll() と foreach ループの代わりに fetchColumn() を使用
+        $getCnt = $stmt->fetchColumn(); // これで直接カウント値を取得します
+
+        // 元の foreach ループは不要になります
+        // foreach($result as $row) {
+        //     $getCnt = $row['CNT'];
+        // }
 
         // 取得結果が0の場合、追加
-        if($getCnt == "0" ) {
+        if ($getCnt == "0") {
             $sql = "SELECT MAX(ID) + 1 AS ID FROM T_USER_INFO";
 
             $stmt = $conn->prepare($sql);
@@ -39,13 +42,13 @@
             $result = $stmt->fetchAll();
 
             // 最大IDを取得する
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $ID = $row['ID'];
             }
 
             // 初回時はNULLのため
-            if($ID == null) {
-                $ID ='1';
+            if ($ID == null) {
+                $ID = '1';
             }
 
             $sql = " insert into ";
@@ -97,9 +100,8 @@
 
         // 更新追加件数を取得して表示する
         $stmt->rowCount();
-
-    } catch (PDOException $e){ 
-        print('Error:'.$e->getMessage());
+    } catch (PDOException $e) {
+        print('Error:' . $e->getMessage());
         // ロールバック
         $conn->rollBack();
         die();
