@@ -32,7 +32,8 @@
         if ($getCnt == "0") {
             // 最大IDを取得して、次のIDを計算
             // テーブル名とカラム名を二重引用符で囲む
-            $sql = "SELECT COALESCE(MAX(\"ID\"), 0) + 1 AS ID FROM \"T_USER_INFO\"";
+            // エイリアス "ID" も二重引用符で囲むことで、大文字のキーとして取得されるように修正
+            $sql = "SELECT COALESCE(MAX(\"ID\"), 0) + 1 AS \"ID\" FROM \"T_USER_INFO\"";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -63,13 +64,13 @@
             // データを挿入
             // テーブル名とカラム名を二重引用符で囲む
             $sql = "INSERT INTO \"T_USER_INFO\" (\"ID\", \"NAME\", \"SEX\", \"POSTNO\", \"ADDRESS1\", \"ADDRESS2\", \"BIKO\") 
-                            VALUES (:ID, :NAME, :SEX, :POSTNO, :ADDRESS1, :ADDRESS2, :BIKO)";
+                                VALUES (:ID, :NAME, :SEX, :POSTNO, :ADDRESS1, :ADDRESS2, :BIKO)";
         } else {
             // 取得結果が1以上の場合、更新
             // テーブル名とカラム名を二重引用符で囲む
             $sql = "UPDATE \"T_USER_INFO\" SET \"NAME\" = :NAME, \"SEX\" = :SEX, \"POSTNO\" = :POSTNO, 
-                            \"ADDRESS1\" = :ADDRESS1, \"ADDRESS2\" = :ADDRESS2, \"BIKO\" = :BIKO 
-                            WHERE \"ID\" = :ID";
+                                \"ADDRESS1\" = :ADDRESS1, \"ADDRESS2\" = :ADDRESS2, \"BIKO\" = :BIKO 
+                                WHERE \"ID\" = :ID";
         }
 
         // SQL実行準備
