@@ -49,15 +49,38 @@
         // 更新画面を呼び出す
         window.open("MasterMente.php?mode=3&id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
     }
+
     // 削除ボタン
     function deleteRow(key) {
         // 確認
         if (!confirm("<?php echo htmlspecialchars($MsgList->getMsg('003')); ?>")) return;
 
-        // 削除画面を呼び出す（開く小窓に変数を渡す）
-        // 削除成功時に小窓が親ウィンドウをリロードするようにするため、open() の戻り値を保存する必要はありません。
-        window.open("Delete.php?id=" + key, 'deleteWindow', "width=500,height=400,left=" + w + ",top=" + h);
+        // Ajaxリクエストを送信して削除を実行
+        fetch("Delete.php?id=" + key)
+            .then(response => {
+                // ネットワークエラーがないか確認
+                if (!response.ok) {
+                    throw new Error('ネットワークエラーが発生しました。');
+                }
+                return response.json(); // JSONレスポンスをパース
+            })
+            .then(data => {
+                if (data.success) {
+                    // 削除成功の場合、現在のウィンドウをリロードして一覧を更新
+                    alert(data.message); // 成功メッセージを表示（任意）
+                    location.reload();
+                } else {
+                    // 削除失敗の場合、エラーメッセージを表示
+                    alert('削除に失敗しました: ' + data.message);
+                }
+            })
+            .catch(error => {
+                // 通信エラーやJSONパースエラーなどのキャッチ
+                console.error('削除中にエラーが発生しました:', error);
+                alert('削除中に予期せぬエラーが発生しました: ' + error.message);
+            });
     }
+
     // 検索条件リンク
     function searchRow() {
         // 検索条件画面を呼び出す
@@ -124,11 +147,11 @@
                 <tr class='chara'>
                     <?php
                     // IDにNull合体演算子とhtmlspecialcharsを適用
-                    echo "<td width='30'><button type='submit' style='width:100%;' name='btnSearch' onclick='selectRow(" . htmlspecialchars($row['ID'] ?? '') . ")'>選択</td> ";
+                    echo "<td width='30'><button type='button' style='width:100%;' name='btnSearch' onclick='selectRow(" . htmlspecialchars($row['ID'] ?? '') . ")'>選択</button></td> ";
                     ?>
                     <?php
                     // IDにNull合体演算子とhtmlspecialcharsを適用
-                    echo "<td width='30'><button type='submit' style='width:100%;' name='btnDelete' onclick='deleteRow(" . htmlspecialchars($row['ID'] ?? '') . ")'>削除</td> ";
+                    echo "<td width='30'><button type='button' style='width:100%;' name='btnDelete' onclick='deleteRow(" . htmlspecialchars($row['ID'] ?? '') . ")'>削除</button></td> ";
                     ?>
                     <td width="100" id="id"><?php echo htmlspecialchars(str_pad($row['ID'] ?? '', 6, '0', STR_PAD_LEFT)); ?></td>
                     <td width="100" name="name"><?php echo htmlspecialchars($row['NAME'] ?? ''); ?></td>

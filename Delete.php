@@ -4,6 +4,9 @@
     // インスタンス生成
     $ConnectInfo = new ConnectInfo();
 
+    // ヘッダーでJSONレスポンスであることを指定
+    header('Content-Type: application/json');
+
     try {
         // PostgreSQL データベースへの接続
         $conn = new PDO(
@@ -34,39 +37,26 @@
 
             // 削除に成功した場合
             if ($deleteCount > 0) {
-                // 親ウィンドウをリロードしてから、小窓を閉じる
-                echo "<script type='text/javascript'>";
-                echo "if (window.opener) {"; // 親ウィンドウが存在するか確認
-                echo "    window.opener.location.reload();"; // 親ウィンドウをリロード
-                echo "}";
-                echo "window.close();"; // この小窓を閉じる
-                echo "</script>";
+                // 成功メッセージをJSONで返す
+                echo json_encode(['success' => true, 'message' => 'レコードが正常に削除されました。']);
             } else {
-                // 削除対象が見つからなかった場合など、メッセージを表示して小窓を閉じる
-                echo "<script type='text/javascript'>";
-                echo "alert('削除対象のレコードが見つかりませんでした。');"; // 必要であればメッセージ表示
-                echo "window.close();"; // 小窓を閉じる
-                echo "</script>";
+                // 削除対象が見つからなかった場合
+                echo json_encode(['success' => false, 'message' => '削除対象のレコードが見つかりませんでした。']);
             }
         } else {
             // IDが指定されていない場合
-            echo "<script type='text/javascript'>";
-            echo "alert('削除するIDが指定されていません。');"; // メッセージ表示
-            echo "window.close();"; // 小窓を閉じる
-            echo "</script>";
+            echo json_encode(['success' => false, 'message' => '削除するIDが指定されていません。']);
         }
     } catch (PDOException $e) {
         // エラーハンドリング
         error_log('Delete.php Error: ' . $e->getMessage()); // エラーログに記録
-        // エラーメッセージを小窓に表示してから閉じる
-        echo "<script type='text/javascript'>";
-        echo "alert('データベースエラーが発生しました。詳細: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "');";
+
         // ロールバック
         if (isset($conn)) { // 接続が確立されているか確認
             $conn->rollBack();
         }
-        echo "window.close();"; // エラー時も小窓を閉じる
-        echo "</script>";
-        die(); // スクリプトの実行を停止
+        // エラーメッセージをJSONで返す
+        echo json_encode(['success' => false, 'message' => 'データベースエラーが発生しました。詳細: ' . $e->getMessage()]);
+        // die()はJSON出力後に実行されるように調整
     }
 ?>
