@@ -200,12 +200,8 @@
         if (!$ErrChk->nullCheck($errMsg)) {
             // 自画面を閉じる
             echo "<script type='text/javascript'>
-                if (window.opener) {
-                    window.opener.location.reload();
-                } else {
-                    alert('親ウィンドウが存在しません。手動で画面を更新してください。');
-                    window.close();
-                }
+                window.opener.location.reload();
+                window.close();
                 </script>";
         }
     }
