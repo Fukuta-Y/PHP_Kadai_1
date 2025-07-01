@@ -6,83 +6,49 @@
 
     $getCnt = "0";
     try {
-
         // DBコネクションを取得する
-        // PostgreSQL データベースへの接続
         $conn = new PDO(
-            $ConnectInfo->getCon(),               // 接続情報
-            $ConnectInfo->getUser(),              // ユーザー名
-            $ConnectInfo->getPassword(),          // パスワード
-            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION) // エラーモード設定
+            $ConnectInfo->getCon(),
+            $ConnectInfo->getUser(),
+            $ConnectInfo->getPassword(),
+            array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
         );
 
         // トランザクションを開始する
         $conn->beginTransaction();
-        $sql = "SELECT COUNT(*) AS CNT FROM T_USER_INFO WHERE ID = :ID";
 
+        // ユーザーIDの存在チェック
+        $sql = "SELECT COUNT(*) AS CNT FROM T_USER_INFO WHERE ID = :ID";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
         $stmt->execute();
-
-        // 警告が発生していた箇所の修正
-        // fetchAll() と foreach ループの代わりに fetchColumn() を使用
-        $getCnt = $stmt->fetchColumn(); // これで直接カウント値を取得します
-
-        // 元の foreach ループは不要になります
-        // foreach($result as $row) {
-        //     $getCnt = $row['CNT'];
-        // }
+        $getCnt = $stmt->fetchColumn();
 
         // 取得結果が0の場合、追加
         if ($getCnt == "0") {
-            $sql = "SELECT MAX(ID) + 1 AS ID FROM T_USER_INFO";
-
+            // 最大IDを取得して、次のIDを計算
+            $sql = "SELECT COALESCE(MAX(ID), 0) + 1 AS ID FROM T_USER_INFO";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
-            $result = $stmt->fetchAll();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $ID = $row['ID'];  // 最大ID + 1
 
-            // 最大IDを取得する
-            foreach ($result as $row) {
-                $ID = $row['ID'];
-            }
-
-            // 初回時はNULLのため
+            // 初回時はNULLのため、ID = 1
             if ($ID == null) {
                 $ID = '1';
             }
 
-            $sql = " insert into ";
-            $sql .= " T_USER_INFO (";
-            $sql .= "    ID";
-            $sql .= "   ,NAME";
-            $sql .= "   ,SEX";
-            $sql .= "   ,POSTNO";
-            $sql .= "   ,ADDRESS1";
-            $sql .= "   ,ADDRESS2";
-            $sql .= "   ,BIKO";
-            $sql .= "   ) VALUES (";
-            $sql .= "    :ID";
-            $sql .= "   ,:NAME";
-            $sql .= "   ,:SEX";
-            $sql .= "   ,:POSTNO";
-            $sql .= "   ,:ADDRESS1";
-            $sql .= "   ,:ADDRESS2";
-            $sql .= "   ,:BIKO";
-            $sql .= " )";
+            // データを挿入
+            $sql = "INSERT INTO T_USER_INFO (ID, NAME, SEX, POSTNO, ADDRESS1, ADDRESS2, BIKO) 
+                        VALUES (:ID, :NAME, :SEX, :POSTNO, :ADDRESS1, :ADDRESS2, :BIKO)";
         } else {
             // 取得結果が1以上の場合、更新
-            $sql = " update ";
-            $sql .= " T_USER_INFO ";
-            $sql .= "   set";
-            $sql .= "  NAME=:NAME";
-            $sql .= " ,SEX=:SEX";
-            $sql .= " ,POSTNO=:POSTNO";
-            $sql .= " ,ADDRESS1=:ADDRESS1";
-            $sql .= " ,ADDRESS2=:ADDRESS2";
-            $sql .= " ,BIKO=:BIKO";
-            $sql .= " WHERE ID =:ID";
+            $sql = "UPDATE T_USER_INFO SET NAME = :NAME, SEX = :SEX, POSTNO = :POSTNO, 
+                        ADDRESS1 = :ADDRESS1, ADDRESS2 = :ADDRESS2, BIKO = :BIKO 
+                        WHERE ID = :ID";
         }
 
+        // SQL実行準備
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':ID', $ID, PDO::PARAM_STR);
         $stmt->bindParam(':NAME', $NAME, PDO::PARAM_STR);
@@ -98,12 +64,12 @@
         // コミット
         $conn->commit();
 
-        // 更新追加件数を取得して表示する
+        // 更新追加件数を取得して表示
         $stmt->rowCount();
     } catch (PDOException $e) {
-        print('Error:' . $e->getMessage());
-        // ロールバック
-        $conn->rollBack();
+        // エラーハンドリング
+        print('Error: ' . $e->getMessage());
+        $conn->rollBack();  // ロールバック
         die();
     }
 ?>
