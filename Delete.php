@@ -20,10 +20,8 @@
         // テーブル名とカラム名を二重引用符で囲む
         $sql = "DELETE FROM \"T_USER_INFO\" WHERE \"ID\" = :ID";
         $stmt = $conn->prepare($sql);
-        // GETパラメータのIDがセットされているか確認し、そうでなければエラーとする
-        if (isset($_GET['id'])) {
-            $stmt->bindParam(':ID', $_GET['id'], PDO::PARAM_STR);
-            $stmt->execute();
+        $stmt->bindParam(':ID', $_GET['id'], PDO::PARAM_STR);
+        $stmt->execute();
 
         // 削除件数を取得する
         $deleteCount = $stmt->rowCount();
@@ -31,26 +29,18 @@
         // コミット
         $conn->commit();
 
-            if ($deleteCount > 0) {
-                $response['success'] = true;
-                $response['message'] = 'レコードが正常に削除されました。';
-            } else {
-                $response['message'] = '指定されたIDのレコードが見つかりませんでした。';
-            }
+        // 削除に成功した場合、ウィンドウを閉じるスクリプトを出力
+        if ($deleteCount > 0) { // 0件より大きい場合（削除された場合）
+            echo "<script type='text/javascript'>window.close();</script>";
         } else {
-            $response['message'] = '削除するIDが指定されていません。';
+            // 削除対象が見つからなかった場合などの処理をここに追加することもできます
+            // 例: echo "削除対象のレコードが見つかりませんでした。";
         }
     } catch (PDOException $e) {
         // エラーハンドリング
         print('Error:' . $e->getMessage());
-        $response['message'] = 'エラーが発生しました: ' . $e->getMessage();
         // ロールバック
-        if (isset($conn)) {
-            $conn->rollBack();
-        }
-    } finally {
-        // JSON形式でレスポンスを出力し、スクリプトの実行を停止
-        echo json_encode($response);
-        exit();
+        $conn->rollBack();
+        die(); // スクリプトの実行を停止
     }
 ?>
