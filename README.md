@@ -1,6 +1,6 @@
 トップ画面
 
-https://user-info-search.onrender.com/MasterMente.php?mode=1
+https://user-info-search.onrender.com/index.php
 
 <pre>
 テーブル作成は以下
