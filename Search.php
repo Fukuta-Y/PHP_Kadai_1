@@ -27,9 +27,9 @@
         $sql = "SELECT";
         $sql .= "    \"ID\","; // カラム名を二重引用符で囲む
         $sql .= "   \"NAME\","; // カラム名を二重引用符で囲む
-        $sql .= "   CASE \"SEX\" WHEN '1' THEN '男' WHEN '2' THEN '女' ELSE '未設定' END AS SEX,"; // カラム名を二重引用符で囲む
-        $sql .= "   SUBSTRING(\"POSTNO\" FROM 1 FOR 3) AS POSTNO1,";  // カラム名を二重引用符で囲む
-        $sql .= "   SUBSTRING(\"POSTNO\" FROM 4 FOR 4) AS POSTNO2,";  // カラム名を二重引用符で囲む
+        $sql .= "   CASE \"SEX\" WHEN '1' THEN '男' WHEN '2' THEN '女' ELSE '未設定' END AS \"SEX\","; // カラム名を二重引用符で囲む
+        $sql .= "   SUBSTRING(\"POSTNO\" FROM 1 FOR 3) AS \"POSTNO1\",";  // カラム名を二重引用符で囲む
+        $sql .= "   SUBSTRING(\"POSTNO\" FROM 4 FOR 4) AS \"POSTNO2\",";  // カラム名を二重引用符で囲む
         $sql .= "   \"POSTNO\","; // 全体の郵便番号カラムも取得
         $sql .= "   \"ADDRESS1\","; // カラム名を二重引用符で囲む
         $sql .= "   \"ADDRESS2\","; // カラム名を二重引用符で囲む
