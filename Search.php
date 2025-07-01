@@ -2,7 +2,7 @@
     require_once('ErrCheck.php');
     require_once('ConnectInfo.php');
 
-    // SearchList.phpからインクルードされる際に、
+    // index.phpからインクルードされる際に、
     // MasterMente.phpから渡された検索条件が
     // グローバル変数として利用されるように宣言します。
     global $ID, $NAME, $SEX, $POSTNO, $ADDRESS1, $ADDRESS2, $BIKO;

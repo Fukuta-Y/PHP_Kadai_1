@@ -78,7 +78,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>SearchList.php</title>
+    <title>index.php</title>
     <link href="design.css" rel="stylesheet">
 </head>
 <body>
