@@ -262,7 +262,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
         <table style="width:500px;height:50px;">
             <tr>
                 <td>
-                    <label style="width:100px;color:red;" id="errLabel"><?php echo htmlspecialchars($errMsg ?? ''); ?></label>
+                    <label style="width:100px;color:red;" id="errLabel"><?php echo htmlspecialchars($errMsg); ?></label>
                 </td>
             </tr>
         </table>
@@ -272,9 +272,9 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
                 echo "<tr> ";
                 echo "<td width='100'>会員番号</td>";
                 echo "<td width='280'>";
-                echo str_pad(htmlspecialchars($ID ?? ''), 6, '0', STR_PAD_LEFT); // IDもhtmlspecialchars
+                echo str_pad(htmlspecialchars($ID), 6, '0', STR_PAD_LEFT); // IDもhtmlspecialchars
                 echo "</td> ";
-                echo "<input type='hidden' name='lblId' value='" . htmlspecialchars($ID ?? '') . "'>"; // hidden inputもエスケープ
+                echo "<input type='hidden' name='lblId' value='" . htmlspecialchars($ID) . "'>"; // hidden inputもエスケープ
                 echo "</tr> ";
             }
             ?>
@@ -284,7 +284,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
                     <?php
                     // エラーチェックの内容がある場合、または初期表示時で$NAMEが設定されている場合
                     if ($ErrChk->nullCheck($NAME) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"" . htmlspecialchars($NAME ?? '') . "\">";
+                        echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"" . htmlspecialchars($NAME) . "\">";
                     } else {
                         // $mode == "3" の場合は、$rowから値を取得
                         if ($mode == "3") {
