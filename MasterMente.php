@@ -53,6 +53,17 @@
             }
             // 検索処理のphpファイルを呼び出し
             include('Search.php');
+
+            // Search.phpによって$resultが設定されるため、その最初の行を$row変数に格納する
+            if (!empty($result)) {
+                $row = $result[0];
+            } else {
+                // 検索結果がない場合、$row を空の配列として初期化し、Undefined array key エラーを防ぐ
+                $row = [];
+                // また、該当データがない旨のエラーメッセージを表示することも検討できます
+                // MsgList.phpに'009'があるので、それを使用
+                $errMsg = $MsgList->getMsg('009'); // 例: 「検索条件に一致するデータがありませんでした。」
+            }
         }
     } else { // POSTリクエスト時
 
@@ -200,254 +211,251 @@
         if (!$ErrChk->nullCheck($errMsg)) {
             // 自画面を閉じる
             echo "<script type='text/javascript'>
-                window.opener.location.reload();
-                window.close();
-                </script>";
+                    window.opener.location.reload();
+                    window.close();
+                    </script>";
         }
     }
-?>
-<!DOCTYPE html>
-<html>
+    ?>
+    <!DOCTYPE html>
+    <html>
 
-<head>
-    <meta charset="utf-8">
-    <title>MasterMente.php</title>
-    <link href="design.css" rel="stylesheet">
-</head>
+    <head>
+        <meta charset="utf-8">
+        <title>MasterMente.php</title>
+        <link href="design.css" rel="stylesheet">
+    </head>
 
-<body>
-    <form action="MasterMente.php" method="post">
-        <table style="width:500px;height:50px;">
-            <tr>
-                <td>
-                    <label style="width:100px;color:red;" id="errLabel"><?php echo $errMsg; ?></label>
-                </td>
-            </tr>
-        </table>
-        <table>
-            <?php
-            if ($mode == "3") {
-                echo "<tr> ";
-                echo "<td width='100'>会員番号</td>";
-                echo "<td width='280'>";
-                echo str_pad($ID, 6, 0, STR_PAD_LEFT);
-                echo "</td> ";
-                echo "<input type='hidden' name='lblId' maxlength='7' size='10' value=$ID>";
-                echo "</tr> ";
-            }
-            ?>
-            <tr>
-                <td width="100">名前</td>
-                <td width="280">
-                    <?php
-                    // ErrCheck クラスのインスタンスはすでに作成されているので、ここで再度 require_once や new する必要はありません
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // エラーチェックの内容がある場合は前回の内容を設定する
-                    if ($ErrChk->nullCheck($NAME) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"$NAME\">"; // 値をダブルクォートで囲む
-                    } else {
-                        if ($mode == "3") {
-                            // $row がどこから来ているのか不明ですが、未定義の場合エラーになる可能性があります。
-                            // Search.php が $row を定義していると仮定します。
-                            // また、値は必ずダブルクォートで囲みましょう。
-                            echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"";
-                            if (isset($row['NAME'])) {
-                                echo htmlspecialchars($row['NAME']);
-                            }
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtName' maxlength='10' size='20'>";
-                        }
-                    }
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td width="100">性別</td>
-                <td width="280">
-                    <?php
-                    // ErrCheck クラスのインスタンスはすでに作成されているので、ここで再度 require_once や new する必要はありません
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 初期表示の場合
-                    if (!$ErrChk->nullCheck($errMsg)) {
-                        // 登録モードの初期表示の場合
-                        if ($mode == "2") {
-                            echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
-                            echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                        }
-                        // 更新モードの初期表示の場合
-                        else if ($mode == "3") {
-                            // $row['SEX'] も同様に存在チェック
-                            $sexValue = isset($row['SEX']) ? $row['SEX'] : ''; // デフォルト値を設定
-                            if ($sexValue == "男" || $sexValue == "1") { // DBによっては'1'で保存されている可能性も考慮
-                                echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
-                                echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                            } else if ($sexValue == "女" || $sexValue == "2") { // DBによっては'2'で保存されている可能性も考慮
-                                echo "<input type='radio' name='rdoSex' value='1'>男</input>";
-                                echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
-                            } else {
-                                // デフォルトとして男にチェックを入れるなど
-                                echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
-                                echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                            }
-                            // 検索モードの初期表示の場合
-                        } else if ($mode == "1") {
-                            echo "<input type='radio' name='rdoSex' value='1'>男</input>"; // 検索モードでは、初期は未指定にしたい場合が多い
-                            echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                            echo "<input type='radio' name='rdoSex' value='0'  checked='checked'>未指定</input>";
-                        }
-                        // 入力チェックで再表示の場合
-                    } else {
-                        // 未指定の場合
-                        if ($SEX == "0") { // 文字列比較でなく数値比較を推奨
-                            echo "<input type='radio' name='rdoSex' value='1'>男</input>";
-                            echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                            echo "<input type='radio' name='rdoSex' value='0'  checked='checked'>未指定</input>";
-                        } else {
-                            if ($SEX == "1") {
-                                echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
-                                echo "<input type='radio' name='rdoSex' value='2'>女</input>";
-                            } else if ($SEX == "2") {
-                                echo "<input type='radio' name='rdoSex' value='1'>男</input>";
-                                echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
-                            }
-                            // 検索モードの時は未指定を表示させる
-                            if ($mode == "1") {
-                                echo "<input type='radio' name='rdoSex' value='0'>未指定</input>";
-                            }
-                        }
-                    }
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td width="100">郵便番号</td>
-                <td width="280">
-                    <?php
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 完全な初期表示の場合
-                    // !isset($POS1) && !isset($POS2) に変更して、変数が全くセットされていないかをチェックする
-                    if (!isset($POS1) && !isset($POS2) && !$ErrChk->nullCheck($errMsg)) {
-                        if ($mode == "3") {
-                            // $row['POSTNO1'] / $row['POSTNO2'] も同様に存在チェックとエスケープ
-                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=\"";
-                            if (isset($row['POSTNO']) && strlen($row['POSTNO']) >= 3) echo htmlspecialchars(substr($row['POSTNO'], 0, 3));
-                            echo "\">";
-                            echo "-";
-                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=\"";
-                            if (isset($row['POSTNO']) && strlen($row['POSTNO']) >= 7) echo htmlspecialchars(substr($row['POSTNO'], 3, 4));
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
-                            echo "-";
-                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
-                        }
-                        // 入力チェックで再表示の場合、またはデータがすでに設定されている場合
-                    } else {
-                        // 中身の設定がされている場合は設定する
-                        if ($ErrChk->nullCheck($POS1)) {
-                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=\"$POS1\">";
-                        } else {
-                            echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
-                        }
-                        echo "-";
-                        if ($ErrChk->nullCheck($POS2)) {
-                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=\"$POS2\">";
-                        } else {
-                            echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
-                        }
-                    }
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td width="100">住所１</td>
-                <td width="280">
-                    <?php
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 入力チェックで再表示の場合
-                    if ($ErrChk->nullCheck($ADDRESS1) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=\"$ADDRESS1\">";
-                    } else {
-                        if ($mode == "3") {
-                            // $row['ADDRESS1'] も同様に存在チェックとエスケープ
-                            echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=\"";
-                            if (isset($row['ADDRESS1'])) echo htmlspecialchars($row['ADDRESS1']);
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtAddress1' maxlength='15' size='25'>";
-                        }
-                    }
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td width="100">住所２</td>
-                <td width="280">
-                    <?php
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 入力チェックで再表示の場合
-                    if ($ErrChk->nullCheck($ADDRESS2) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=\"$ADDRESS2\">";
-                    } else {
-                        if ($mode == "3") {
-                            // $row['ADDRESS2'] も同様に存在チェックとエスケープ
-                            echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=\"";
-                            if (isset($row['ADDRESS2'])) echo htmlspecialchars($row['ADDRESS2']);
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtAddress2' maxlength='15' size='25'>";
-                        }
-                    }
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td width="100">備考</td>
-                <td width="280">
-                    <?php
-                    // require_once('ErrCheck.php');
-                    // $ErrChk = new ErrCheck();
-                    // 入力チェックで再表示の場合
-                    if ($ErrChk->nullCheck($BIKO) || $ErrChk->nullCheck($errMsg)) {
-                        echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"$BIKO\">";
-                    } else {
-                        if ($mode == "3") {
-                            // $row['BIKO'] も同様に存在チェックとエスケープ
-                            echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"";
-                            if (isset($row['BIKO'])) echo htmlspecialchars($row['BIKO']);
-                            echo "\">";
-                        } else {
-                            echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"$BIKO\">";
-                        }
-                    }
-                    ?>
-                </td>
-            <tr>
-            <tr>
-                <td colspan="2">
-                    </br>
-                    <center>
+    <body>
+        <form action="MasterMente.php" method="post">
+            <table style="width:500px;height:50px;">
+                <tr>
+                    <td>
+                        <label style="width:100px;color:red;" id="errLabel"><?php echo htmlspecialchars($errMsg ?? ''); ?></label>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <?php
+                if ($mode == "3") {
+                    echo "<tr> ";
+                    echo "<td width='100'>会員番号</td>";
+                    echo "<td width='280'>";
+                    echo str_pad($ID, 6, 0, STR_PAD_LEFT);
+                    echo "</td> ";
+                    echo "<input type='hidden' name='lblId' maxlength='7' size='10' value=$ID>";
+                    echo "</tr> ";
+                }
+                ?>
+                <tr>
+                    <td width="100">名前</td>
+                    <td width="280">
                         <?php
-                        // 検索モードの場合
-                        if ($mode == "1") {
-                            echo "<button type='submit' style='width:100px;' name='btnReSearch'>検索</button>";
-                        } else if ($mode == "2") {
-                            echo "<button type='submit' style='width:100px;' name='btnInsert'>新規登録</button>";
+                        // ErrCheck クラスのインスタンスはすでに作成されているので、ここで再度 require_once や new する必要はありません
+                        // require_once('ErrCheck.php');
+                        // $ErrChk = new ErrCheck();
+                        // エラーチェックの内容がある場合は前回の内容を設定する
+                        if ($ErrChk->nullCheck($NAME) || $ErrChk->nullCheck($errMsg)) {
+                            echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"" . htmlspecialchars($NAME ?? '') . "\">"; // 値をダブルクォートで囲む
                         } else {
-                            echo "<button type='submit' style='width:100px;' name='btnUpdate'>更新</button>";
+                            if ($mode == "3") {
+                                // $row がどこから来ているのか不明ですが、未定義の場合エラーになる可能性があります。
+                                // Search.php が $row を定義していると仮定します。
+                                // また、値は必ずダブルクォートで囲みましょう。
+                                echo "<input type='text' name='txtName' maxlength='10' size='20' value=\"";
+                                if (isset($row['NAME'])) {
+                                    echo htmlspecialchars($row['NAME']);
+                                }
+                                echo "\">";
+                            } else {
+                                echo "<input type='text' name='txtName' maxlength='10' size='20'>";
+                            }
                         }
                         ?>
-                    </center>
-                </td>
-            </tr>
-        </table>
-    </form>
-</body>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100">性別</td>
+                    <td width="280">
+                        <?php
+                        // ErrCheck クラスのインスタンスはすでに作成されているので、ここで再度 require_once や new する必要はありません
+                        // require_once('ErrCheck.php');
+                        // $ErrChk = new ErrCheck();
+                        // 初期表示の場合
+                        if (!$ErrChk->nullCheck($errMsg)) {
+                            // 登録モードの初期表示の場合
+                            if ($mode == "2") {
+                                echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
+                                echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                            }
+                            // 更新モードの初期表示の場合
+                            else if ($mode == "3") {
+                                // $row['SEX'] も同様に存在チェック
+                                $sexValue = isset($row['SEX']) ? $row['SEX'] : ''; // デフォルト値を設定
+                                if ($sexValue == "男" || $sexValue == "1") { // DBによっては'1'で保存されている可能性も考慮
+                                    echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
+                                    echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                                } else if ($sexValue == "女" || $sexValue == "2") { // DBによっては'2'で保存されている可能性も考慮
+                                    echo "<input type='radio' name='rdoSex' value='1'>男</input>";
+                                    echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
+                                } else {
+                                    // デフォルトとして男にチェックを入れるなど
+                                    echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
+                                    echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                                }
+                                // 検索モードの初期表示の場合
+                            } else if ($mode == "1") {
+                                echo "<input type='radio' name='rdoSex' value='1'>男</input>"; // 検索モードでは、初期は未指定にしたい場合が多い
+                                echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                                echo "<input type='radio' name='rdoSex' value='0'  checked='checked'>未指定</input>";
+                            }
+                            // 入力チェックで再表示の場合
+                        } else {
+                            // 未指定の場合
+                            if (($SEX ?? '') == "0") { // 文字列比較でなく数値比較を推奨
+                                echo "<input type='radio' name='rdoSex' value='1'>男</input>";
+                                echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                                echo "<input type='radio' name='rdoSex' value='0'  checked='checked'>未指定</input>";
+                            } else {
+                                if (($SEX ?? '') == "1") {
+                                    echo "<input type='radio' name='rdoSex' value='1' checked='checked'>男</input>";
+                                    echo "<input type='radio' name='rdoSex' value='2'>女</input>";
+                                } else if (($SEX ?? '') == "2") {
+                                    echo "<input type='radio' name='rdoSex' value='1'>男</input>";
+                                    echo "<input type='radio' name='rdoSex' value='2' checked='checked'>女</input>";
+                                }
+                                // 検索モードの時は未指定を表示させる
+                                if ($mode == "1") {
+                                    echo "<input type='radio' name='rdoSex' value='0'>未指定</input>";
+                                }
+                            }
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100">郵便番号</td>
+                    <td width="280">
+                        <?php
+                        // require_once('ErrCheck.php');
+                        // $ErrChk = new ErrCheck();
+                        // 完全な初期表示の場合
+                        // !isset($POS1) && !isset($POS2) に変更して、変数が全くセットされていないかをチェックする
+                        if (!isset($POS1) && !isset($POS2) && !$ErrChk->nullCheck($errMsg)) {
+                            if ($mode == "3") {
+                                // $row['POSTNO'] が存在し、かつ十分な長さがあるかチェック
+                                $postNoValue = isset($row['POSTNO']) ? $row['POSTNO'] : '';
+                                echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=\"" . htmlspecialchars(substr($postNoValue, 0, 3)) . "\">";
+                                echo "-";
+                                echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=\"" . htmlspecialchars(substr($postNoValue, 3, 4)) . "\">";
+                            } else {
+                                echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
+                                echo "-";
+                                echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
+                            }
+                            // 入力チェックで再表示の場合、またはデータがすでに設定されている場合
+                        } else {
+                            // 中身の設定がされている場合は設定する
+                            if ($ErrChk->nullCheck($POS1)) {
+                                echo "<input type='text' name='txtPostNo1' maxlength='3' size='4' value=\"" . htmlspecialchars($POS1) . "\">";
+                            } else {
+                                echo "<input type='text' name='txtPostNo1' maxlength='3' size='4'>";
+                            }
+                            echo "-";
+                            if ($ErrChk->nullCheck($POS2)) {
+                                echo "<input type='text' name='txtPostNo2' maxlength='4' size='8' value=\"" . htmlspecialchars($POS2) . "\">";
+                            } else {
+                                echo "<input type='text' name='txtPostNo2' maxlength='4' size='8'>";
+                            }
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100">住所１</td>
+                    <td width="280">
+                        <?php
+                        // require_once('ErrCheck.php');
+                        // $ErrChk = new ErrCheck();
+                        // 入力チェックで再表示の場合
+                        if ($ErrChk->nullCheck($ADDRESS1) || $ErrChk->nullCheck($errMsg)) {
+                            echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=\"" . htmlspecialchars($ADDRESS1 ?? '') . "\">";
+                        } else {
+                            if ($mode == "3") {
+                                // $row['ADDRESS1'] も同様に存在チェックとエスケープ
+                                echo "<input type='text' name='txtAddress1' maxlength='15' size='25' value=\"";
+                                if (isset($row['ADDRESS1'])) echo htmlspecialchars($row['ADDRESS1']);
+                                echo "\">";
+                            } else {
+                                echo "<input type='text' name='txtAddress1' maxlength='15' size='25'>";
+                            }
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100">住所２</td>
+                    <td width="280">
+                        <?php
+                        // require_once('ErrCheck.php');
+                        // $ErrChk = new ErrCheck();
+                        // 入力チェックで再表示の場合
+                        if ($ErrChk->nullCheck($ADDRESS2) || $ErrChk->nullCheck($errMsg)) {
+                            echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=\"" . htmlspecialchars($ADDRESS2 ?? '') . "\">";
+                        } else {
+                            if ($mode == "3") {
+                                // $row['ADDRESS2'] も同様に存在チェックとエスケープ
+                                echo "<input type='text' name='txtAddress2' maxlength='15' size='25' value=\"";
+                                if (isset($row['ADDRESS2'])) echo htmlspecialchars($row['ADDRESS2']);
+                                echo "\">";
+                            } else {
+                                echo "<input type='text' name='txtAddress2' maxlength='15' size='25'>";
+                            }
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="100">備考</td>
+                    <td width="280">
+                        <?php
+                        // require_once('ErrCheck.php');
+                        // $ErrChk = new ErrCheck();
+                        // 入力チェックで再表示の場合
+                        if ($ErrChk->nullCheck($BIKO) || $ErrChk->nullCheck($errMsg)) {
+                            echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"" . htmlspecialchars($BIKO ?? '') . "\">";
+                        } else {
+                            if ($mode == "3") {
+                                // $row['BIKO'] も同様に存在チェックとエスケープ
+                                echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"";
+                                if (isset($row['BIKO'])) echo htmlspecialchars($row['BIKO']);
+                                echo "\">";
+                            } else {
+                                echo "<input type='text' name='txtBiko' maxlength='15' size='25' value=\"" . htmlspecialchars($BIKO ?? '') . "\">";
+                            }
+                        }
+                        ?>
+                    </td>
+                <tr>
+                <tr>
+                    <td colspan="2">
+                        </br>
+                        <center>
+                            <?php
+                            // 検索モードの場合
+                            if ($mode == "1") {
+                                echo "<button type='submit' style='width:100px;' name='btnReSearch'>検索</button>";
+                            } else if ($mode == "2") {
+                                echo "<button type='submit' style='width:100px;' name='btnInsert'>新規登録</button>";
+                            } else {
+                                echo "<button type='submit' style='width:100px;' name='btnUpdate'>更新</button>";
+                            }
+                            ?>
+                        </center>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
 
 </html>
