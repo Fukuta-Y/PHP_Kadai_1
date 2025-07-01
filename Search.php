@@ -77,6 +77,8 @@
             $params[':BIKO'] = '%' . $BIKO . '%';
         }
 
+        $sql .= " ORDER BY CAST(\"ID\" AS INTEGER) ASC";
+
         // SQL実行準備
         $stmt = $conn->prepare($sql);
 
