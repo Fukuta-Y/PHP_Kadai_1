@@ -19,11 +19,13 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
 # === Run Stage ===
 FROM php:8.2-apache
 
+# 必要なPHP拡張を再インストール（pdo_pgsql）
+RUN apt-get update && apt-get install -y libpq-dev \
+    && docker-php-ext-install pdo_pgsql
+
+# コンテナの作業ディレクトリを指定
 WORKDIR /app
 COPY --from=build /app /var/www/html
-
-# PostgreSQLのPDO拡張は通常デフォルトで有効化されているため、再度有効化は不要
-# 必要であれば、インストールや有効化を行います。
 
 # Apacheで動作させる
 EXPOSE 80
