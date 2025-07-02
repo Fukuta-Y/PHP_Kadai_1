@@ -34,7 +34,7 @@
 
     // 初期表示時でセッションが開始、存在している場合（セッションの性別が存在しないのは初回だけのため)
     if (isset($_SESSION['rdoSex']) && $dbCnt == '0') {
-        $errMsg = $MsgList->getMsg('010');
+        $errMsg = $MsgList->getMsg('002');
     } else {
         $errMsg = null;
     }

@@ -61,8 +61,8 @@
                 // 検索結果がない場合、$row を空の配列として初期化し、Undefined array key エラーを防ぐ
                 $row = [];
                 // また、該当データがない旨のエラーメッセージを表示することも検討できます
-                // MsgList.phpに'009'があるので、それを使用
-                $errMsg = $MsgList->getMsg('009'); // 例: 「検索条件に一致するデータがありませんでした。」
+                // MsgList.phpに'001'があるので、それを使用
+                $errMsg = $MsgList->getMsg('001'); // 例: 「検索条件に一致するデータがありませんでした。」
             }
         }
     } else { // POSTリクエスト時
@@ -101,20 +101,20 @@
                         if ($ErrChk->lenSameCheck($POS2, 4)) {
                             //数値かどうか
                             if (!$ErrChk->numCheck($POS2, 4)) {
-                                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
+                                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(),'郵便番号２','半角数字4桁');
                             }
                         } else {
-                            $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
+                            $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4桁');
                         }
                     } else {
-                        $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
+                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3桁');
                     }
                 } else {
-                    $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
+                    $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3桁');
                 }
                 // 郵便番号１と郵便番号２の片方のみ空の場合
             } else if ($POS1 != null || $POS2 != null) {
-                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPostno());
+                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPostno());
             }
 
             // エラーが０件の場合
@@ -147,55 +147,55 @@
 
             // 名前は入力必須
             if (!$ErrChk->nullCheck($NAME)) {
-                $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getName());
+                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getName());
             }
             // 郵便番号1はともに入力必須
             else if (!$ErrChk->nullCheck($POS1)) {
-                $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getPos1());
+                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos1());
             }
             // 郵便番号2はともに入力必須
             else if (!$ErrChk->nullCheck($POS2)) {
-                $errMsg = sprintf($MsgList->getMsg('007'), $ColumnList->getPos2());
+                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
             }
             // 郵便番号1の書式チェック
             else if (!$ErrChk->numCheck($POS1, 3)) {
-                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3桁');
             }
             // 郵便番号2の書式チェック
             else if (!$ErrChk->numCheck($POS2, 4)) {
-                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4桁');
             }
             // 名前が1０桁以下かどうか（必須項目）
             else if (!$ErrChk->lenOverCheck($NAME, 10)) {
-                $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getName(), 10);
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getName(), 10);
             }
             // 郵便番号１が3桁かどうか（必須項目）
             else if (!$ErrChk->lenSameCheck($POS1, 3)) {
-                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3桁');
             }
             // 郵便番号2が4桁かどうか（必須項目）
             else if (!$ErrChk->lenSameCheck($POS2, 4)) {
-                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4桁');
             } else {
                 // 住所1の文字数チェック（任意項目）
                 if ($ErrChk->nullCheck($ADDRESS1)) {
                     // 住所1が15桁以下かどうか
                     if (!$ErrChk->lenOverCheck($ADDRESS1, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getAddress1(), 15);
+                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getAddress1(), 15);
                     }
                 }
                 // 住所２の文字数チェック（任意項目）
                 if ($ErrChk->nullCheck($ADDRESS2)) {
                     // 住所2が15桁以下かどうか
                     if (!$ErrChk->lenOverCheck($ADDRESS2, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getAddress2(), 15);
+                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getAddress2(), 15);
                     }
                 }
                 // 備考の文字数チェック（任意項目）
                 if ($ErrChk->nullCheck($BIKO)) {
                     // 住所2が15桁以下かどうか
                     if (!$ErrChk->lenOverCheck($BIKO, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('008'), $ColumnList->getBiko(), 15);
+                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getBiko(), 15);
                     }
                 }
             }
