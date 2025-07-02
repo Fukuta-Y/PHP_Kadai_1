@@ -101,16 +101,16 @@
                         if ($ErrChk->lenSameCheck($POS2, 4)) {
                             //数値かどうか
                             if (!$ErrChk->numCheck($POS2, 4)) {
-                                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(),'郵便番号２','半角数字4桁');
+                                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(),'郵便番号２','半角数字4');
                             }
                         } else {
-                            $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4桁');
+                            $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4');
                         }
                     } else {
-                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3桁');
+                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3');
                     }
                 } else {
-                    $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3桁');
+                    $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3');
                 }
                 // 郵便番号１と郵便番号２の片方のみ空の場合
             } else if ($POS1 != null || $POS2 != null) {
@@ -159,11 +159,11 @@
             }
             // 郵便番号1の書式チェック
             else if (!$ErrChk->numCheck($POS1, 3)) {
-                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3桁');
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3');
             }
             // 郵便番号2の書式チェック
             else if (!$ErrChk->numCheck($POS2, 4)) {
-                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4桁');
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4');
             }
             // 名前が1０桁以下かどうか（必須項目）
             else if (!$ErrChk->lenOverCheck($NAME, 10)) {
@@ -171,31 +171,31 @@
             }
             // 郵便番号１が3桁かどうか（必須項目）
             else if (!$ErrChk->lenSameCheck($POS1, 3)) {
-                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3桁');
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos1(), '郵便番号１', '半角数字3');
             }
             // 郵便番号2が4桁かどうか（必須項目）
             else if (!$ErrChk->lenSameCheck($POS2, 4)) {
-                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4桁');
+                $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getPos2(), '郵便番号２', '半角数字4');
             } else {
                 // 住所1の文字数チェック（任意項目）
                 if ($ErrChk->nullCheck($ADDRESS1)) {
                     // 住所1が15桁以下かどうか
                     if (!$ErrChk->lenOverCheck($ADDRESS1, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getAddress1(), 15);
+                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getAddress1(), '15');
                     }
                 }
                 // 住所２の文字数チェック（任意項目）
                 if ($ErrChk->nullCheck($ADDRESS2)) {
                     // 住所2が15桁以下かどうか
                     if (!$ErrChk->lenOverCheck($ADDRESS2, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getAddress2(), 15);
+                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getAddress2(), '15');
                     }
                 }
                 // 備考の文字数チェック（任意項目）
                 if ($ErrChk->nullCheck($BIKO)) {
                     // 住所2が15桁以下かどうか
                     if (!$ErrChk->lenOverCheck($BIKO, 15)) {
-                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getBiko(), 15);
+                        $errMsg = sprintf($MsgList->getMsg('006'), $ColumnList->getBiko(), '15');
                     }
                 }
             }
