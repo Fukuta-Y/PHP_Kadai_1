@@ -101,16 +101,16 @@
                         if ($ErrChk->lenSameCheck($POS2, 4)) {
                             //数値かどうか
                             if (!$ErrChk->numCheck($POS2, 4)) {
-                                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos2());
+                                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
                             }
                         } else {
-                            $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2(), 4);
+                            $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
                         }
                     } else {
                         $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
                     }
                 } else {
-                    $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos1(), 3);
+                    $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
                 }
                 // 郵便番号１と郵便番号２の片方のみ空の場合
             } else if ($POS1 != null || $POS2 != null) {
@@ -163,7 +163,7 @@
             }
             // 郵便番号2の書式チェック
             else if (!$ErrChk->numCheck($POS2, 4)) {
-                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos2());
+                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
             }
             // 名前が1０桁以下かどうか（必須項目）
             else if (!$ErrChk->lenOverCheck($NAME, 10)) {
@@ -171,11 +171,11 @@
             }
             // 郵便番号１が3桁かどうか（必須項目）
             else if (!$ErrChk->lenSameCheck($POS1, 3)) {
-                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos1(), 3);
+                $errMsg = sprintf($MsgList->getMsg('004'), $ColumnList->getPos1());
             }
             // 郵便番号2が4桁かどうか（必須項目）
             else if (!$ErrChk->lenSameCheck($POS2, 4)) {
-                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2(), 4);
+                $errMsg = sprintf($MsgList->getMsg('005'), $ColumnList->getPos2());
             } else {
                 // 住所1の文字数チェック（任意項目）
                 if ($ErrChk->nullCheck($ADDRESS1)) {
