@@ -1,13 +1,18 @@
 <?php
 class ConnectInfo
 {
+    /**
+     * PostgreSQL 接続情報 (DSN)
+     * Neonの場合、hostの後ろに「-pooler」を付け、
+     * optionsパラメータでプロジェクトIDを指定するのが確実です。
+     */
+    public $conInfo = 'pgsql:host=ep-divine-truth-a1eqa5uj-pooler.ap-southeast-1.aws.neon.tech;port=5432;dbname=neondb;sslmode=require;options=--project=ep-divine-truth-a1eqa5uj-pooler';
 
-    // PostgreSQL 接続情報
-    public $conInfo = 'pgsql:host=aws-0-ap-northeast-1.pooler.supabase.com;port=5432;dbname=postgres';
+    // ユーザー名
+    public $user = 'neondb_owner';
 
-    // ユーザー名とパスワード
-    public $user = 'postgres.szdcftaezxmhxjxqdeyi';
-    public $password = 'Yuki1008!!!!';
+    // パスワード
+    public $password = 'npg_POc5kym8noRC';
 
     // 接続情報を返す
     public function getCon()
@@ -27,4 +32,3 @@ class ConnectInfo
         return $this->password;
     }
 }
-?>
