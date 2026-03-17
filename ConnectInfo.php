@@ -3,10 +3,10 @@ class ConnectInfo
 {
     /**
      * PostgreSQL 接続情報 (DSN)
-     * Neonの場合、hostの後ろに「-pooler」を付け、
-     * optionsパラメータでプロジェクトIDを指定するのが確実です。
+     * 1. 「-pooler」を削除したホスト名を使う
+     * 2. 「options」パラメータを削除する
      */
-    public $conInfo = 'pgsql:host=ep-divine-truth-a1eqa5uj-pooler.ap-southeast-1.aws.neon.tech;port=5432;dbname=neondb;sslmode=require;options=--project=ep-divine-truth-a1eqa5uj-pooler';
+    public $conInfo = 'pgsql:host=ep-divine-truth-a1eqa5uj.ap-southeast-1.aws.neon.tech;port=5432;dbname=neondb;sslmode=require';
 
     // ユーザー名
     public $user = 'neondb_owner';
