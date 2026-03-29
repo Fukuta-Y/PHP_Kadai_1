@@ -13,7 +13,13 @@ $ColumnList = new ColumnList();
 // 変数初期化
 $ID = null;
 $NAME = null;
-$SEX = '0';
+$SEX = '0'; // デフォルトは未指定
+
+// ★新規登録モード(2)の場合は最初から「男(1)」を選択状態にする
+if (isset($_GET['mode']) && $_GET['mode'] == '2') {
+    $SEX = '1';
+}
+
 $POS1 = null;
 $POS2 = null;
 $POSTNO = null;
@@ -31,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
         if (!empty($result)) {
             $row = $result[0];
             $NAME = $row['NAME'];
-            $SEX  = trim($row['SEX_RAW'] ?? '0');
+            $SEX  = trim($row['SEX_RAW'] ?? '0'); // DBから取得した値で上書き
             $POSTNO = $row['POSTNO'] ?? '';
             $POS1 = substr($POSTNO, 0, 3);
             $POS2 = substr($POSTNO, 3, 4);
