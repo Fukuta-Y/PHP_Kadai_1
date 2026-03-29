@@ -19,12 +19,13 @@ try {
         array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
     );
 
-    // 1. まず条件に合う「全件数」を取得する (ページング計算用)
+    // 1. 全件数取得
     $sqlCount = "SELECT COUNT(*) FROM \"T_USER_INFO\" WHERE 1=1 ";
 
-    // 2. データを取得するSQL (表示用)
+    // 2. データ取得SQL
     $sqlData = "SELECT \"ID\", \"NAME\", 
                     CASE \"SEX\" WHEN '1' THEN '男' WHEN '2' THEN '女' ELSE '未設定' END AS \"SEX\",
+                    \"SEX\" AS \"SEX_RAW\", 
                     SUBSTRING(\"POSTNO\" FROM 1 FOR 3) AS \"POSTNO1\",
                     SUBSTRING(\"POSTNO\" FROM 4 FOR 4) AS \"POSTNO2\",
                     \"POSTNO\", \"ADDRESS1\", \"ADDRESS2\", \"BIKO\"
@@ -62,7 +63,6 @@ try {
         $params[':BIKO'] = '%' . $BIKO . '%';
     }
 
-    // 全件数の取得実行
     $stmtCount = $conn->prepare($sqlCount . $where);
     foreach ($params as $key => $val) {
         $stmtCount->bindValue($key, $val, ($key === ':SEX') ? PDO::PARAM_INT : PDO::PARAM_STR);
@@ -71,22 +71,19 @@ try {
     $dbCnt = $stmtCount->fetchColumn();
     $_SESSION['dbCnt'] = $dbCnt;
 
-    // データ取得の実行 (LIMITとOFFSETを追加)
     $sqlData .= $where . " ORDER BY CAST(\"ID\" AS INTEGER) ASC LIMIT :limit OFFSET :offset";
     $stmtData = $conn->prepare($sqlData);
 
-    // パラメータをバインド
     foreach ($params as $key => $val) {
         $stmtData->bindValue($key, $val, ($key === ':SEX') ? PDO::PARAM_INT : PDO::PARAM_STR);
     }
-    $stmtData->bindValue(':limit', (int)$rowsPerPage, PDO::PARAM_INT);
-    $stmtData->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+    $stmtData->bindValue(':limit', (int)($rowsPerPage ?? 10), PDO::PARAM_INT);
+    $stmtData->bindValue(':offset', (int)($offset ?? 0), PDO::PARAM_INT);
 
     $stmtData->execute();
     $result = $stmtData->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log('Database Error: ' . $e->getMessage());
     $_SESSION['dbCnt'] = 0;
-    print('Error:' . $e->getMessage());
-    die();
+    die('Error:' . $e->getMessage());
 }

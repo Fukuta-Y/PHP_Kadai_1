@@ -163,8 +163,8 @@ if (isset($_SESSION['rdoSex']) && $dbCnt == '0') {
             </tr>
             <?php foreach ($result as $row): ?>
                 <tr class='chara'>
-                    <td width='30'><button type='button' style='width:100%;' onclick='selectRow(<?php echo htmlspecialchars($row['ID'] ?? ''); ?>)'>選択</button></td>
-                    <td width='30'><button type='button' style='width:100%;' onclick='deleteRow(<?php echo htmlspecialchars($row['ID'] ?? ''); ?>)'>削除</button></td>
+                    <td width='50'><button type='button' style='width:100%;' onclick='selectRow(<?php echo htmlspecialchars($row['ID'] ?? ''); ?>)'>選択</button></td>
+                    <td width='50'><button type='button' style='width:100%;' onclick='deleteRow(<?php echo htmlspecialchars($row['ID'] ?? ''); ?>)'>削除</button></td>
                     <td width="100"><?php echo htmlspecialchars(str_pad($row['ID'] ?? '', 6, '0', STR_PAD_LEFT)); ?></td>
                     <td width="100"><?php echo htmlspecialchars($row['NAME'] ?? ''); ?></td>
                     <td width="100"><?php echo htmlspecialchars($row['SEX'] ?? ''); ?></td>
@@ -227,22 +227,12 @@ if (isset($_SESSION['rdoSex']) && $dbCnt == '0') {
         }
 
         function deleteRow(key) {
-            if (!confirm("<?php echo htmlspecialchars($MsgList->getMsg('003')); ?>")) return;
+            if (!confirm("本当に削除しますか？")) return;
             showLoader();
-            fetch("Delete.php?id=" + key)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        document.getElementById('loader-container').style.display = 'none';
-                        alert('削除失敗');
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('loader-container').style.display = 'none';
-                    alert('エラー');
-                });
+            fetch("Delete.php?id=" + key).then(res => res.json()).then(data => {
+                if (data.success) location.reload();
+                else alert('失敗');
+            });
         }
     </script>
 </body>
