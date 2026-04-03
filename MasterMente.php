@@ -13,9 +13,9 @@ $ColumnList = new ColumnList();
 // 変数初期化
 $ID = null;
 $NAME = null;
-$SEX = '0'; // デフォルトは未指定
+$SEX = '0';
 
-// ★新規登録モード(2)の場合は最初から「男(1)」を選択状態にする
+// 新規登録モード(2)の場合は「男(1)」を選択状態にする
 if (isset($_GET['mode']) && $_GET['mode'] == '2') {
     $SEX = '1';
 }
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
         if (!empty($result)) {
             $row = $result[0];
             $NAME = $row['NAME'];
-            $SEX  = trim($row['SEX_RAW'] ?? '0'); // DBから取得した値で上書き
+            $SEX  = trim($row['SEX_RAW'] ?? '0');
             $POSTNO = $row['POSTNO'] ?? '';
             $POS1 = substr($POSTNO, 0, 3);
             $POS2 = substr($POSTNO, 3, 4);
@@ -68,6 +68,10 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
             $_SESSION['txtAddress1'] = $ADDRESS1;
             $_SESSION['txtAddress2'] = $ADDRESS2;
             $_SESSION['txtBiko'] = $BIKO;
+
+            // 検索時は親画面をindex.php（1ページ目）へ強制移動させて閉じる
+            echo "<script>window.opener.location.href = 'index.php'; window.close();</script>";
+            exit;
         }
     } else if (isset($_POST['btnInsert']) || isset($_POST['btnUpdate'])) {
         if (!$ErrChk->nullCheck($NAME)) {

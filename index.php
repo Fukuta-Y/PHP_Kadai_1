@@ -36,6 +36,13 @@ include('Search.php');
 $dbCnt = $_SESSION['dbCnt'] ?? 0;
 $maxPage = (int)ceil($dbCnt / $rowsPerPage);
 
+// 現在のページが最大ページ数を超えている場合（検索で件数が減った時など）、1ページ目として再読み込み
+if ($currentPage > $maxPage && $maxPage > 0) {
+    $currentPage = 1;
+    $offset = 0;
+    include('Search.php');
+}
+
 if (isset($_SESSION['rdoSex']) && $dbCnt == '0') {
     $errMsg = $MsgList->getMsg('002');
 } else {
@@ -85,22 +92,18 @@ if (isset($_SESSION['rdoSex']) && $dbCnt == '0') {
             }
         }
 
-        /* --- 配置の調整 --- */
         body {
             margin: 0;
             padding: 20px;
-            /* 画面中央に寄せるための設定 */
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* フォーム全体をテーブルの幅に合わせる */
         form[name="form1"] {
             display: inline-block;
         }
 
-        /* ページングを中央に */
         .pagination-container {
             display: flex;
             justify-content: center;
@@ -211,19 +214,22 @@ if (isset($_SESSION['rdoSex']) && $dbCnt == '0') {
             }, 300);
         });
 
-        var w = (screen.width - 500) / 2;
-        var h = (screen.height - 400) / 2;
+        // ★ウィンドウサイズを大きく修正 (幅650, 高さ500)
+        var winW = 650;
+        var winH = 500;
+        var leftPos = (screen.width - winW) / 2;
+        var topPos = (screen.height - winH) / 2;
 
         function selectRow(key) {
-            window.open("MasterMente.php?mode=3&id=" + key, '', "width=500,height=400,left=" + w + ",top=" + h);
+            window.open("MasterMente.php?mode=3&id=" + key, '', "width=" + winW + ",height=" + winH + ",left=" + leftPos + ",top=" + topPos);
         }
 
         function searchRow() {
-            window.open('MasterMente.php?mode=1', '', "width=500,height=400,left=" + w + ",top=" + h);
+            window.open('MasterMente.php?mode=1', '', "width=" + winW + ",height=" + winH + ",left=" + leftPos + ",top=" + topPos);
         }
 
         function insertRow() {
-            window.open('MasterMente.php?mode=2', '', "width=500,height=400,left=" + w + ",top=" + h);
+            window.open('MasterMente.php?mode=2', '', "width=" + winW + ",height=" + winH + ",left=" + leftPos + ",top=" + topPos);
         }
 
         function deleteRow(key) {
