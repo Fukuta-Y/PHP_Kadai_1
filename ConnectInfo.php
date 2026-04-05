@@ -6,13 +6,17 @@ class ConnectInfo
      * 1. 「-pooler」を削除したホスト名を使う
      * 2. 「options」パラメータを削除する
      */
-    public $conInfo = 'pgsql:host=ep-divine-truth-a1eqa5uj.ap-southeast-1.aws.neon.tech;port=5432;dbname=neondb;sslmode=require';
+    private $conInfo;
+    private $user;
+    private $password;
 
-    // ユーザー名
-    public $user = 'neondb_owner';
-
-    // パスワード
-    public $password = 'npg_POc5kym8noRC';
+    public function __construct()
+    {
+        // 全て環境変数から取得。設定漏れがある場合は null または false が入ります
+        $this->conInfo  = getenv('DB_DSN_PHP');
+        $this->user     = getenv('DB_USER');
+        $this->password = getenv('DB_PASSWORD');
+    }
 
     // 接続情報を返す
     public function getCon()
